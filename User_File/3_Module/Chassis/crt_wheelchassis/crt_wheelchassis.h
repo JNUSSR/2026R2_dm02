@@ -198,14 +198,14 @@ protected :
     // 轮组半径（m）直径152mm
     const float Wheel_Radius = 0.076f;
 
-    // 左右轮中心距 (车宽)   480mm 485.56mm
-    const float Chassis_W = 0.48556f;
+    // 左右轮中心距 (车宽)   613mm 
+    const float Chassis_W = 0.613f;
 
-    // 前后轮中心距 (车长) 390mm
-    const float Chassis_L = 0.390f;
+    // 前后轮中心距 (车长) 404mm
+    const float Chassis_L = 0.404f;
 
-    // 底盘旋转中心到轮子中心的距离 (m) 630mm
-    const float Chassis_R = 0.315f;
+    // 底盘旋转中心到轮子中心的距离 (m) 367.10761mm
+    const float Chassis_R = 0.36710761f;
 
     // √2/2
     const float SQRT2_DIV_2 = 0.70710678f;
