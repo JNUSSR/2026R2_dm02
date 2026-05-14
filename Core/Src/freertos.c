@@ -26,7 +26,6 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
-#include "4_Task/DJI_Motor_task.h"
 #include "tsk_config_and_callback.h"
 #include "ChassisTask.h"
 #include "ClimbingTask2.h"
@@ -171,14 +170,15 @@ void MX_FREERTOS_Init(void) {
 /* USER CODE END Header_StartMAVLinkTask */
 void StartMAVLinkTask(void *argument)
 {
-  /* USER CODE BEGIN StartTaskMAVLink */
+  /* init code for USB_DEVICE */
+  MX_USB_DEVICE_Init();
+  /* USER CODE BEGIN StartMAVLinkTask */
   /* Infinite loop */
-  UartTask();
   for(;;)
   {
     osDelay(1);
   }
-  /* USER CODE END StartTaskMAVLink */
+  /* USER CODE END StartMAVLinkTask */
 }
 
 /* USER CODE BEGIN Header_StartTaskClimbing */

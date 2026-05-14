@@ -32,7 +32,7 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
-#include "4_Task/tsk_config_and_callback.h"
+#include "4_Task/tsk_config_and_callback/tsk_config_and_callback.h"
 
 /* USER CODE END Includes */
 

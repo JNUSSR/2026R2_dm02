@@ -38,26 +38,19 @@ const ArmStep DrawKFS[] = {
 bool drawkfs_flag = false;
 bool idle_flag = false;
 
-// void CAN1_Motor_Call_Back(Struct_CAN_Rx_Buffer *Rx_Buffer) {
-//     switch (Rx_Buffer->Header.StdId) {
-//     }
-// }
-
 void DrawKFS_Task() {
-    //BSP_Init(BSP_LED_1_ON | BSP_LED_8_ON);
-    //CAN_Init(&hcan1, CAN1_Motor_Call_Back);
-    //CAN_Init(&hcan2, CAN2_Motor_Call_Back);
     Motor_Z.PID_Omega.Init(1500.0f, 600.0f, 0.0f, 0.0f, 3000.0f, 8000.0f);
     Motor_Z.PID_Angle.Init(20.0f, 0.0f, 0.0f, 0.0f, 10.0f, 15.0f);
     Motor_Z.Init(&hfdcan2, Motor_DJI_ID_0x205, Motor_DJI_Control_Method_ANGLE);
 
+    // 同步 R2_Z: DrawKFS 的 X/R 在 CAN1 的 0x206/0x207
     Motor_X.PID_Omega.Init(1000.0f, 200.0f, 0.0f, 0.0f, 1500.0f, 3000.0f);
     Motor_X.PID_Angle.Init(10.0f, 0.0f, 0.0f, 0.0f, 10.0f, 10.0f);
-    Motor_X.Init(&hfdcan2, Motor_DJI_ID_0x206, Motor_DJI_Control_Method_ANGLE);
+    Motor_X.Init(&hfdcan1, Motor_DJI_ID_0x206, Motor_DJI_Control_Method_ANGLE);
 
     Motor_R.PID_Omega.Init(1300.0f, 200.0f, 0.0f, 0.0f, 1500.0f, 3000.0f);
     Motor_R.PID_Angle.Init(15.0f, 0.0f, 0.0f, 0.0f, 10.0f, 15.0f);
-    Motor_R.Init(&hfdcan2, Motor_DJI_ID_0x207, Motor_DJI_Control_Method_ANGLE);
+    Motor_R.Init(&hfdcan1, Motor_DJI_ID_0x207, Motor_DJI_Control_Method_ANGLE);
 
     MotorAdapter_C620 Adapter_Z(Motor_Z);
     MotorAdapter_C610 Adapter_X(Motor_X);
@@ -90,7 +83,6 @@ void DrawKFS_Task() {
         Motor_Z.TIM_Calculate_PeriodElapsedCallback();
         Motor_X.TIM_Calculate_PeriodElapsedCallback();
         Motor_R.TIM_Calculate_PeriodElapsedCallback();
-        //TIM_CAN_PeriodElapsedCallback();
         osDelay(1);
     }
 }
