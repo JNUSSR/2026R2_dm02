@@ -14,7 +14,7 @@ void Climbing_CAN_Rx_Dispatch(FDCAN_RxHeaderTypeDef &Header, uint8_t *Buffer)
 {
     climbingCtrl.CAN_RxCallback(Header.Identifier, Buffer);
 }
-    
+
 void ClimbingTask(void)
 {
     // 与 docking 一致: 任务入口里完成一次初始化

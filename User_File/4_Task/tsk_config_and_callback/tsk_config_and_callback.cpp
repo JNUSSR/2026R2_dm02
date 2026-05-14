@@ -19,13 +19,14 @@
 #include "1_Middleware/Driver/UART/drv_uart.h"
 #include "2_Device/BSP/BMI088/bsp_bmi088.h"
 #include "2_Device/BSP/Power/bsp_power.h"
-#include "4_Task/DJI_Motor_task.h"
 #include "4_Task/ChassisTask/ChassisTask.h"
 #include "4_Task/ClampingTask/ClampingTask.h"
 #include "4_Task/ClimbingTask/ClimbingTask2.h"
+#include "4_Task/DrawKFSTask/DrawKFS_Task.h"
 #include "1_Middleware/Driver/WDG/drv_wdg.h"
 #include "1_Middleware/System/Timestamp/sys_timestamp.h"
 #include "1_Middleware/Driver/Uart_printf/uart_printf.h"
+#include "3_Module/arm/arm.h"
 
 /* Private macros ------------------------------------------------------------*/
 
@@ -57,27 +58,6 @@ void SPI2_Callback(uint8_t *Tx_Buffer, uint8_t *Rx_Buffer, uint16_t Tx_Length, u
     }
 }
 
-/**
- * @brief CAN1回调函数
- *
- *
- */
-void CAN1_Callback(FDCAN_RxHeaderTypeDef &Header, uint8_t *Buffer)
-{
-    switch (Header.Identifier)
-    {
-    case (0x201):
-    {
-        DJI_M3508_CAN_RxCpltCallback(Buffer);
-        break;
-    }
-    default:
-    {
-        break;
-    }
-    }
-}
-
 void USART_DEBUG_CALLBACK(uint8_t *Buffer, uint16_t Length)
 {
     if(Buffer[Length - 1] == '\n')
@@ -103,19 +83,14 @@ void Task1s_Callback()
 {
 }
 
-
-//===========================================================
-//  From F4 ↓
-//===========================================================
-
 // extern "C" void Chassis_CAN_Rx_Dispatch(FDCAN_HandleTypeDef *hcan, Struct_CAN_Rx_Buffer *Rx_Buffer);
+
+extern Class_Motor_DJI_C620 Motor_Z;
+extern Class_Motor_DJI_C610 Motor_X;
+extern Class_Motor_DJI_C610 Motor_R;
 
 static void CAN1_Global_Call_Back(FDCAN_RxHeaderTypeDef &Header, uint8_t *Buffer) {
     switch (Header.Identifier) {
-        case (0x201): {
-            Climbing_CAN_Rx_Dispatch(Header, Buffer);
-            break;
-        }
         case (0x202): {
             Climbing_CAN_Rx_Dispatch(Header, Buffer);
             break;
@@ -128,18 +103,16 @@ static void CAN1_Global_Call_Back(FDCAN_RxHeaderTypeDef &Header, uint8_t *Buffer
             Climbing_CAN_Rx_Dispatch(Header, Buffer);
             break;
         }
-        case (0x205): {
-            Clamping_CAN_Rx_Dispatch(Header, Buffer);
+        case (0x206):
+            Motor_X.CAN_RxCpltCallback();
             break;
-        }
+        case (0x207):
+            Motor_R.CAN_RxCpltCallback();
+            break;
         default:
             break;
     }
 }
-
-extern Class_Motor_DJI_C620 Motor_Z;
-extern Class_Motor_DJI_C610 Motor_X;
-extern Class_Motor_DJI_C610 Motor_R;
 
 void CAN2_Global_Call_Back(FDCAN_RxHeaderTypeDef &Header, uint8_t *Buffer) {
     switch (Header.Identifier) {
@@ -152,11 +125,11 @@ void CAN2_Global_Call_Back(FDCAN_RxHeaderTypeDef &Header, uint8_t *Buffer) {
         case (0x205):
             Motor_Z.CAN_RxCpltCallback();
             break;
-        case (0x206):
-            Motor_X.CAN_RxCpltCallback();
-            break;
         case (0x207):
-            Motor_R.CAN_RxCpltCallback();
+            Clamping_CAN_Rx_Dispatch(Header, Buffer);
+            break;
+        case (0x206):
+            Climbing_CAN_Rx_Dispatch(Header, Buffer);
             break;
     }
 }
@@ -257,7 +230,7 @@ void Task_Init()
 
 
     //再Task_Init中初始化Task_Clamping，解决了按复位按钮后电机无法正常运行的问题
-    clampingCtrl.Init(&hfdcan1);
+    clampingCtrl.Init(&hfdcan2);
 
     // BSP_BMI088.Init();
 

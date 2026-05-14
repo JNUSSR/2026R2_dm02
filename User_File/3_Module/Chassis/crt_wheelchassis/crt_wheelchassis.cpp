@@ -117,15 +117,15 @@ void Class_Chassis_Mecanum::Init()
     {
         if (i == 0) // 左前轮
         {
-            Chassis_Motor[i].PID_Omega.Init(400.0f, 279.93f, 0.0f, 0.0f, 10000.0f, 12000.0f);
+            Chassis_Motor[i].PID_Omega.Init(1200.0f, 500.0f, 0.0f, 0.0f, 10000.0f, 12000.0f);
         }
         else if (i == 2) // 左后轮
         {
-            Chassis_Motor[i].PID_Omega.Init(400.0f, 279.93f, 0.0f, 0.0f, 10000.0f, 12000.0f);
+            Chassis_Motor[i].PID_Omega.Init(1200.0f, 500.0f, 0.0f, 0.0f, 10000.0f, 12000.0f);
         }
         else // 右前轮和右后轮
         {
-            Chassis_Motor[i].PID_Omega.Init(400.0f, 279.93f, 0.0f, 0.0f, 10000.0f, 12000.0f);
+            Chassis_Motor[i].PID_Omega.Init(1200.0f, 500.0f, 0.0f, 0.0f, 10000.0f, 12000.0f);
         }    
     }
     
@@ -187,9 +187,10 @@ void Class_Chassis_Mecanum::Kinematics_Inverse_Resolution()
     // 旋转解算系数 k = (L/2 + W/2)
     float k = (Chassis_L + Chassis_W) / 2;
 
+    // 符合右手坐标系
     float vx = Target_Velocity_X;
-    float vy = Target_Velocity_Y;
-    float vw = Target_Omega;
+    float vy = -Target_Velocity_Y;
+    float vw = -Target_Omega;
 
      // 标准X型麦克纳姆轮解算公式
     // 左前轮 (motor_chassis[0])

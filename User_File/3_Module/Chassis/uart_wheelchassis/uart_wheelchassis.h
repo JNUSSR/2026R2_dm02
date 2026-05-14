@@ -39,8 +39,8 @@ private:
 	static constexpr float SPEED_DEADZONE = 0.001f; //死区设置，避免小输入导致底盘抖动
 
 	// 默认斜率规划参数（1kHz）
-	static constexpr float VELOCITY_INCREASE_STEP = 0.012f;// 0.004f对应约4m/s/s的加速度
-	static constexpr float VELOCITY_DECREASE_STEP = 0.015f;// 0.006f对应约6m/s/s的减速度
+	static constexpr float VELOCITY_INCREASE_STEP = 0.0004f;// 0.0004f对应约0.4m/s²的加速度
+	static constexpr float VELOCITY_DECREASE_STEP = 0.0010f;// 0.001f对应约1m/s²的减速度
 	static constexpr float ANGULAR_INCREASE_STEP = 0.003f;// 0.003f对应约3rad/s²的加速度
 	static constexpr float ANGULAR_DECREASE_STEP = 0.005f;// 0.005f对应约5rad/s²的减速度
 
