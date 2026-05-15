@@ -104,7 +104,6 @@ void StartTaskDrawKFS(void *argument);
 void StartTaskClamping(void *argument);
 void StartTaskChassis(void *argument);
 
-extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /**
@@ -171,7 +170,7 @@ void MX_FREERTOS_Init(void) {
 void StartMAVLinkTask(void *argument)
 {
   /* init code for USB_DEVICE */
-  MX_USB_DEVICE_Init();
+  UartTask();
   /* USER CODE BEGIN StartMAVLinkTask */
   /* Infinite loop */
   for(;;)
