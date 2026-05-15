@@ -6,114 +6,170 @@
 #include "alg_slope.h"
 #include "arm.h"
 
-#define TASK_FREQ_HZ (1000.0f)
-#define MM_TO_M(x) ((x) / 1000.0f)
-#define TURNS_TO_RADS(x) ((x) * 2.0f * PI)
+// ==========================================
+// 0. 基础换算工具
+// ==========================================
 
-#define SCREW_LEAD_MM_PER_TURN (135.0f)
-#define movingmm(x_mm) TURNS_TO_RADS((x_mm) / SCREW_LEAD_MM_PER_TURN)
+#define TASK_FREQ_HZ        (1000.0f)
+#define MM_TO_M(x)          ((x) / 1000.0f)
+#define TURNS_TO_RADS(x)    ((x) * 2.0f * PI)
 
-#define FRONT_LEG_DIR (-1.0f)
-#define REAR_LEG_DIR (1.0f)
+// 丝杆导程: 每转一圈对应的直线位移(mm)
+#define SCREW_LEAD_MM_PER_TURN   (135.0f)
+#define movingmm(x_mm)       TURNS_TO_RADS((x_mm) / SCREW_LEAD_MM_PER_TURN)
+
+// 前/后腿方向修正（-1.0f 反向）
+#define FRONT_LEG_DIR        (-1.0f)
+#define REAR_LEG_DIR         (1.0f)
 #define movingmm_front(x_mm) movingmm((x_mm) * FRONT_LEG_DIR)
-#define movingmm_rear(x_mm) movingmm((x_mm) * REAR_LEG_DIR)
+#define movingmm_rear(x_mm)  movingmm((x_mm) * REAR_LEG_DIR)
 
-#define RC_RPM_TO_RADPS(x) ((x) * 2.0f * PI / 60.0f)
+// 避免和 dvc_motor.h 里的同名宏冲突
+#define RC_RPM_TO_RADPS(x)  ((x) * 2.0f * PI / 60.0f)
 
-#define POS_FRONT_Init movingmm_front(-220.0f)
-#define POS_REAR_Init movingmm_rear(-80.0f)
+// ==========================================
+// 1. 机械位置参数(上/下台阶)  以下都是负值向上，正值向下
+// ==========================================
+//初始状态
+#define POS_FRONT_Init       movingmm_front(-220.0f)
+#define POS_REAR_Init        movingmm_rear(-80.0f)
 
-#define POS_FRONT_RETRACT_20cm movingmm_front(-220.0f)
-#define POS_REAR_RETRACT_20cm movingmm_rear(-80.0f)
-#define POS_FRONT_TOUCH_20cm movingmm_front(-200.0f)
-#define POS_REAR_TOUCH_20cm movingmm_rear(0.0f)
-#define POS_FRONT_LIFT_20cm movingmm_front(20.0f)
-#define POS_REAR_LIFT_20cm movingmm_rear(220.0f)
+//上20cm台阶
+#define POS_FRONT_RETRACT_20cm    movingmm_front(-220.0f)
+#define POS_REAR_RETRACT_20cm     movingmm_rear(-80.0f)
+
+#define POS_FRONT_TOUCH_20cm      movingmm_front(-200.0f) //-200
+#define POS_REAR_TOUCH_20cm       movingmm_rear(0.0f)     //0.0
+
+#define POS_FRONT_LIFT_20cm       movingmm_front(20.0f) //20
+#define POS_REAR_LIFT_20cm        movingmm_rear(220.0f) //220
+
 #define POS_FRONT_FINAL_20cm movingmm_front(-220.0f)
-#define POS_REAR_FINAL_20cm movingmm_rear(-80.0f)
+#define POS_REAR_FINAL_20cm  movingmm_rear(-80.0f)
 
-#define POS_FRONT_RETRACT_40cm movingmm_front(-420.0f)
-#define POS_REAR_RETRACT_40cm movingmm_rear(-75.0f)
-#define POS_FRONT_TOUCH_40cm movingmm_front(-400.0f)
-#define POS_REAR_TOUCH_40cm movingmm_rear(0.0f)
-#define POS_FRONT_LIFT_40cm movingmm_front(20.0f)
-#define POS_REAR_LIFT_40cm movingmm_rear(413.0f)
+//上40cm台阶
+#define POS_FRONT_RETRACT_40cm    movingmm_front(-420.0f)
+#define POS_REAR_RETRACT_40cm     movingmm_rear(-75.0f)
+
+#define POS_FRONT_TOUCH_40cm      movingmm_front(-400.0f)
+#define POS_REAR_TOUCH_40cm       movingmm_rear(0.0f)
+
+#define POS_FRONT_LIFT_40cm       movingmm_front(20.0f)
+#define POS_REAR_LIFT_40cm        movingmm_rear(413.0f)
+
+
 #define POS_FRONT_FINAL_40cm movingmm_front(-220.0f)
-#define POS_REAR_FINAL_40cm movingmm_rear(-80.0f)
+#define POS_REAR_FINAL_40cm  movingmm_rear(-80.0f)
 
-#define DESCEND_FRONT_TOUCH_TARGET movingmm_front(200.0f)
-#define DESCEND_REAR_TOUCH_TARGET movingmm_rear(0.0f)
+//下20cm台阶
+// 下台阶：状态3 触地目标
+#define DESCEND_FRONT_TOUCH_TARGET     movingmm_front(200.0f)
+#define DESCEND_REAR_TOUCH_TARGET      movingmm_rear(0.0f)
+
+// 下台阶：状态4 全局下降目标
 #define DESCEND_FRONT_GLOBAL_DOWN_TARGET movingmm_front(240.0f)
-#define DESCEND_REAR_GLOBAL_DOWN_TARGET movingmm_rear(40.0f)
-#define DESCEND_FRONT_RAISE_TARGET movingmm_front(0.0f)
-#define DESCEND_REAR_RAISE_TARGET movingmm_rear(-210.0f)
+#define DESCEND_REAR_GLOBAL_DOWN_TARGET  movingmm_rear(40.0f)
 
-#define WHEEL_RADIUS_M MM_TO_M(50.0f)
-#define WHEEL_TRAVEL_UP_M (0.63f)
-#define WHEEL_TRAVEL_UP_RAD (WHEEL_TRAVEL_UP_M / WHEEL_RADIUS_M)
-#define WHEEL_TRAVEL_DESCEND_M (0.63f)
-#define WHEEL_TRAVEL_DESCEND_RAD (WHEEL_TRAVEL_DESCEND_M / WHEEL_RADIUS_M)
+// 下台阶：状态6 抬起过渡目标
+// 前脚保持下层地面接触，后脚保持上层台阶对应高度
+#define DESCEND_FRONT_RAISE_TARGET       movingmm_front(0.0f)
+#define DESCEND_REAR_RAISE_TARGET        movingmm_rear(-210.0f)
 
-#define WHEEL_SLOPE_RPM_UP (85.0f)
-#define WHEEL_SLOPE_RPM_DESCEND (70.0f)
-#define WHEEL_SLOPE_STEP_UP (RC_RPM_TO_RADPS(WHEEL_SLOPE_RPM_UP) / TASK_FREQ_HZ)
-#define WHEEL_SLOPE_STEP_DESCEND (RC_RPM_TO_RADPS(WHEEL_SLOPE_RPM_DESCEND) / TASK_FREQ_HZ)
+// 下台阶：状态7 脱离台阶，轮子再前移 0.1m
+// #define WHEEL_TRAVEL_DESCEND_RELEASE_M   (0.18f)
+// #define WHEEL_TRAVEL_DESCEND_RELEASE_RAD (WHEEL_TRAVEL_DESCEND_RELEASE_M / WHEEL_RADIUS_M)
 
-#define PID_WHEEL_OMEGA_KP (450.0f)
-#define PID_WHEEL_OMEGA_KI (200.0f)
-#define PID_WHEEL_ANGLE_KP (10.0f)
-#define PID_WHEEL_ANGLE_KI (0.0f)
-#define WHEEL_CREEP_OMEGA_RADPS (0.3f)
+// ==========================================
+// 2. 速度、斜坡、时间参数
+// ==========================================
 
-#define SETUP_TEST_REAR_DIR (1.0f)
-#define SETUP_TEST_REAR_COMP (2200.0f)
+// 轮子角度模式：距离->角度（rad）
+//上台阶
+#define WHEEL_RADIUS_M                MM_TO_M(50.0f)
+#define WHEEL_TRAVEL_UP_M             (0.63f)
+#define WHEEL_TRAVEL_UP_RAD           (WHEEL_TRAVEL_UP_M / WHEEL_RADIUS_M)
+//下台阶
+#define WHEEL_TRAVEL_DESCEND_M        (0.63f)
+#define WHEEL_TRAVEL_DESCEND_RAD      (WHEEL_TRAVEL_DESCEND_M / WHEEL_RADIUS_M)
+//#define WHEEL_ANGLE_DONE_TOL_RAD      (0.25f) //轮子角度到位容忍度 即误差到某个值时认为轮子已经到位
 
-#define PID_FRONT_OMEGA_KP_NORMAL (138.5f)
-#define PID_FRONT_ANGLE_KP_NORMAL (70.8f)
-#define PID_REAR_OMEGA_KP_NORMAL (167.0f)
-#define PID_REAR_ANGLE_KP_NORMAL (85.0f)
-#define PID_REAR_OMEGA_KI_NORMAL (10.0f)
-#define PID_REAR_ANGLE_KI_NORMAL (1.0f)
+// 轮子角度斜坡
+#define WHEEL_SLOPE_RPM_UP            (85.0f) //up
+#define WHEEL_SLOPE_RPM_DESCEND       (70.0f) //descend
+#define WHEEL_SLOPE_STEP_UP           (RC_RPM_TO_RADPS(WHEEL_SLOPE_RPM_UP) / TASK_FREQ_HZ)
+#define WHEEL_SLOPE_STEP_DESCEND      (RC_RPM_TO_RADPS(WHEEL_SLOPE_RPM_DESCEND) / TASK_FREQ_HZ)
 
-#define PID_FRONT_OMEGA_KP_LIFT (305.0f)
-#define PID_FRONT_ANGLE_KP_LIFT (140.0f)
-#define PID_REAR_OMEGA_KP_LIFT (345.0f)
-#define PID_REAR_ANGLE_KP_LIFT (115.0f)
-#define PID_REAR_OMEGA_KI_LIFT (10.0f)
-#define PID_REAR_ANGLE_KI_LIFT (1.0f)
+// 轮子角度模式 PID
+#define PID_WHEEL_OMEGA_KP            (450.0f)
+#define PID_WHEEL_OMEGA_KI            (200.0f)
+#define PID_WHEEL_ANGLE_KP            (10.0f)
+#define PID_WHEEL_ANGLE_KI            (0.0f)
+#define WHEEL_CREEP_OMEGA_RADPS       (0.3f)
 
-#define TIME_SETUP 1500
-#define TIME_TOUCH 500
-#define TIME_LIFT 1500
-#define TIME_LIFT_REAR_DELAY 100
-#define TIME_DRIVE 2000
-#define TIME_RETRACT 1500
+#define SETUP_TEST_REAR_DIR          (1.0f)
+#define SETUP_TEST_REAR_COMP         (2200.0f)
 
-#define TIME_DESC_SETUP 1500
-#define TIME_DESC_TOUCH 1500
-#define TIME_DESC_GLOBAL_DOWN 1000
-#define DESCEND_DRIVE_TIME_MS 2000
-#define TIME_DESC_RAISE 2000
+
+// 动态PID参数（按工况切换）
+#define PID_FRONT_OMEGA_KP_NORMAL   (138.5f) //正常前轮P
+#define PID_FRONT_ANGLE_KP_NORMAL   (70.8f)
+#define PID_REAR_OMEGA_KP_NORMAL    (167.0f) //正常后轮P
+#define PID_REAR_ANGLE_KP_NORMAL    (85.0f)
+#define PID_REAR_OMEGA_KI_NORMAL    (10.0f) //正常后轮I
+#define PID_REAR_ANGLE_KI_NORMAL    (1.0f)
+
+#define PID_FRONT_OMEGA_KP_LIFT     (305.0f) //抬升前轮P
+#define PID_FRONT_ANGLE_KP_LIFT     (140.0f)
+#define PID_REAR_OMEGA_KP_LIFT      (345.0f) //抬升后轮P
+#define PID_REAR_ANGLE_KP_LIFT      (115.0f)
+#define PID_REAR_OMEGA_KI_LIFT      (10.0f) //抬升后轮I
+#define PID_REAR_ANGLE_KI_LIFT      (1.0f)
+
+// --- 上台阶时间参数 ---
+#define TIME_SETUP           1500  // 给2秒让它缩腿
+#define TIME_TOUCH           500  // 触地时间
+#define TIME_LIFT            1500  // 顶升时间
+#define TIME_LIFT_REAR_DELAY 100   // 顶升阶段后脚延时启动
+#define TIME_DRIVE           2000  // 平移时间
+#define TIME_RETRACT         1500  // 收腿时间
+
+// --- 下台阶时间参数 ---
+#define TIME_DESC_SETUP      1500
+#define TIME_DESC_TOUCH      1500  // 下台阶：状态3 触地时间
+#define TIME_DESC_GLOBAL_DOWN  1000 // 下台阶：状态4 全局下降时间
+#define DESCEND_DRIVE_TIME_MS  2000 // 下台阶：状态5 平移时间
+#define TIME_DESC_RAISE      2000 // 下台阶：状态6 抬升时间
+// #define TIME_DESC_RELEASE    3000 // 下台阶：状态7 脱离时间
+
+// ==========================================
+// 3. 状态定义
+// ==========================================
 
 typedef enum {
-    STEP_IDLE = 0,
-    STEP_SETUP,
-    STEP_TOUCH_DOWN,
-    STEP_GLOBAL_LIFT,
-    STEP_DRIVE_FWD,
-    STEP_RETRACT,
-    STEP_DONE,
-    STEP_DESCEND_SETUP,
-    STEP_DESCEND_TOUCH,
-    STEP_DESCEND_GLOBAL_DOWN,
-    STEP_DESCEND_DRIVE,
-    STEP_DESCEND_RAISE
+    STEP_IDLE = 0,            // 空闲
+    STEP_SETUP,               // 上台阶: 收腿准备
+    STEP_TOUCH_DOWN,          // 上台阶: 前腿找台阶, 后腿找地
+    STEP_GLOBAL_LIFT,         // 上台阶: 全局顶升
+    STEP_DRIVE_FWD,           // 上台阶: 轮子平移
+    STEP_RETRACT,             // 上台阶: 收腿复位
+    STEP_DONE,                // 上台阶完成
+
+    STEP_DESCEND_SETUP,       // 下台阶: 收腿准备
+    STEP_DESCEND_TOUCH,       // 下台阶: 触地
+    STEP_DESCEND_GLOBAL_DOWN, // 下台阶: 全局下降
+    STEP_DESCEND_DRIVE,       // 下台阶: 轮子平移
+    STEP_DESCEND_RAISE,       // 下台阶: 抬起
+    // STEP_DESCEND_RELEASE,     // 下台阶: 轮子前移脱离台阶
+    // STEP_DESCEND_DONE         // 下台阶完成
 } ClimbingState_e;
 
 typedef enum {
     CLIMB_UP_MODE_20CM = 0,
     CLIMB_UP_MODE_40CM
 } ClimbUpMode_e;
+
+#endif // TEST_FEEDBACK_CLIMBING_CONTROLLER_H
+
 
 class ClimbingController {
 private:
@@ -195,10 +251,5 @@ public:
 
     void ManualNext(void);
     void DescendManualNext(void);
-    void ManualReset(void);
-    void ManualGoto(ClimbingState_e state);
     void EmergencyStop(void);
-    void SetChassisExternalControl(uint8_t enable);
 };
-
-#endif // TEST_FEEDBACK_CLIMBING_CONTROLLER_H

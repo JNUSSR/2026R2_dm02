@@ -40,11 +40,6 @@ void Climbing_Task_Entry(void)
     climbingCtrl.TaskEntry1ms();
 }
 
-void Climbing_Next_Step(void)
-{
-    climbingCtrl.NextStep();
-}
-
 void Climbing_Auto_Start(void)
 {
     climbingCtrl.AutoStart40cm();
@@ -95,11 +90,6 @@ void Climbing_Auto_Task_1ms(void)
     climbingCtrl.AutoTask1ms();
 }
 
-uint8_t Climbing_Is_Auto_Running(void)
-{
-    return climbingCtrl.IsAutoRunning();
-}
-
 void Climbing_Manual_Next(void)
 {
     climbingCtrl.ManualNext();
@@ -110,27 +100,7 @@ void Climbing_Descend_Manual_Next(void)
     climbingCtrl.DescendManualNext();
 }
 
-void Climbing_Manual_Reset(void)
-{
-    climbingCtrl.ManualReset();
-}
-
-void Climbing_Manual_Goto(ClimbingState_e state)
-{
-    climbingCtrl.ManualGoto(state);
-}
-
 void Climbing_Emergency_Stop(void)
 {
     climbingCtrl.EmergencyStop();
-}
-
-void Climbing_Set_Chassis_External_Control(uint8_t enable)
-{
-    climbingCtrl.SetChassisExternalControl(enable);
-}
-
-ClimbingState_e Climbing_Get_State(void)
-{
-    return climbingCtrl.GetState();
 }

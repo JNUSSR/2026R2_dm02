@@ -33,13 +33,9 @@ uint8_t Climbing_Is_Auto_Running(void);
 // 手动调试接口
 void Climbing_Manual_Next(void);
 void Climbing_Descend_Manual_Next(void);
-void Climbing_Manual_Reset(void);
 #ifdef __cplusplus
-void Climbing_Manual_Goto(ClimbingState_e state);
 #endif
 void Climbing_Emergency_Stop(void);
-// 底盘外部接管: 1 外部, 0 状态机
-void Climbing_Set_Chassis_External_Control(uint8_t enable);
 #ifdef __cplusplus
 ClimbingState_e Climbing_Get_State(void);
 #endif
