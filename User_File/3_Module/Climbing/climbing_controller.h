@@ -127,6 +127,7 @@
 
 // --- 上台阶时间参数 ---
 #define TIME_SETUP           1500  // 给2秒让它缩腿
+#define TIME_CHASSIS_APPROACH 500  // 底盘向前微调贴紧台阶的时间 (0.5s)
 #define TIME_TOUCH           500  // 触地时间
 #define TIME_LIFT            1500  // 顶升时间
 #define TIME_LIFT_REAR_DELAY 100   // 顶升阶段后脚延时启动
@@ -148,6 +149,7 @@
 typedef enum {
     STEP_IDLE = 0,            // 空闲
     STEP_SETUP,               // 上台阶: 收腿准备
+    STEP_CHASSIS_APPROACH,    // 上台阶: 底盘向前微调贴紧台阶
     STEP_TOUCH_DOWN,          // 上台阶: 前腿找台阶, 后腿找地
     STEP_GLOBAL_LIFT,         // 上台阶: 全局顶升
     STEP_DRIVE_FWD,           // 上台阶: 轮子平移
