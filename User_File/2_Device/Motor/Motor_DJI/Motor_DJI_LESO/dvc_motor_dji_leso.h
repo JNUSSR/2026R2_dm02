@@ -6,9 +6,14 @@
 #ifndef DVC_MOTOR_DJI_LESO_H
 #define DVC_MOTOR_DJI_LESO_H
 
-#include "1_Middleware/Algorithm/ADRC/LESO/LESO.h"
+#include "1_Middleware/Algorithm/ADRC/ADRC.h"
 #include "2_Device/Motor/Motor_DJI/dvc_motor_dji.h"
 
+/*
+* @brief 位置控制模式的选择
+* -- 0 代表原始串级位置控制
+* -- 1 代表基于二阶LESO的直接位置控制
+*/
 enum Enum_Motor_DJI_LESO_Angle_Mode
 {
     Motor_DJI_LESO_Angle_Mode_ORIGIN = 0,
@@ -36,6 +41,10 @@ public:
 
     void Set_Position_ADRC(float __LESO_Frequency, float __LESO_Dt, float __LESO_B, float __Position_Kp, float __Position_Kd);
 
+    void Set_Position_Current_Max(float __Position_Current_Max);
+
+    float Get_Position_Current_Max();
+
     void Set_Omega_Kp(float __Omega_Kp);
 
     float Get_Omega_Kp();
@@ -51,12 +60,15 @@ protected:
     float LESO_Dt;
     float LESO_B;
     float Omega_Kp = 0.0f;
+    // ADRC速度控制器输出限幅, 最终仍会再经过电机OUT_MAX物理限幅
     float Omega_Current_Max = 0.0f;
+    // ADRC位置控制器输出限幅, 最终仍会再经过电机OUT_MAX物理限幅
+    float Position_Current_Max = 0.0f;
     float Position_Kp = 0.0f;
     float Position_Kd = 0.0f;
-    Enum_Motor_DJI_LESO_Angle_Mode Angle_Mode = Motor_DJI_LESO_Angle_Mode_ORIGIN;
-    FirstOrderSystemESO LESO_1st;
-    SecondOrderSystemESO LESO_2nd;
+    Enum_Motor_DJI_LESO_Angle_Mode Angle_Mode = Motor_DJI_LESO_Angle_Mode_LESO_2ND;
+    FirstOrderSystemADRC Omega_ADRC;
+    SecondOrderSystemADRC Position_ADRC;
 
     void Reset_LESO();
 };
@@ -82,6 +94,10 @@ public:
 
     void Set_Position_ADRC(float __LESO_Frequency, float __LESO_Dt, float __LESO_B, float __Position_Kp, float __Position_Kd);
 
+    void Set_Position_Current_Max(float __Position_Current_Max);
+
+    float Get_Position_Current_Max();
+
     void Set_Omega_Kp(float __Omega_Kp);
 
     float Get_Omega_Kp();
@@ -97,12 +113,15 @@ protected:
     float LESO_Dt;
     float LESO_B;
     float Omega_Kp = 0.0f;
+    // ADRC速度控制器输出限幅, 最终仍会再经过电机OUT_MAX物理限幅
     float Omega_Current_Max = 0.0f;
+    // ADRC位置控制器输出限幅, 最终仍会再经过电机OUT_MAX物理限幅
+    float Position_Current_Max = 0.0f;
     float Position_Kp = 0.0f;
     float Position_Kd = 0.0f;
-    Enum_Motor_DJI_LESO_Angle_Mode Angle_Mode = Motor_DJI_LESO_Angle_Mode_ORIGIN;
-    FirstOrderSystemESO LESO_1st;
-    SecondOrderSystemESO LESO_2nd;
+    Enum_Motor_DJI_LESO_Angle_Mode Angle_Mode = Motor_DJI_LESO_Angle_Mode_LESO_2ND;
+    FirstOrderSystemADRC Omega_ADRC;
+    SecondOrderSystemADRC Position_ADRC;
 
     void Reset_LESO();
 };
@@ -156,6 +175,27 @@ inline void Class_Motor_DJI_C610_LESO::Set_Position_ADRC(float __LESO_Frequency,
 }
 
 /**
+ * @brief 设置二阶位置ADRC控制器输出限幅
+ *
+ * @param __Position_Current_Max 位置ADRC控制器输出限幅
+ */
+inline void Class_Motor_DJI_C610_LESO::Set_Position_Current_Max(float __Position_Current_Max)
+{
+    Position_Current_Max = __Position_Current_Max;
+    Reset_LESO();
+}
+
+/**
+ * @brief 获取二阶位置ADRC控制器输出限幅
+ *
+ * @return float 位置ADRC控制器输出限幅
+ */
+inline float Class_Motor_DJI_C610_LESO::Get_Position_Current_Max()
+{
+    return (Position_Current_Max);
+}
+
+/**
  * @brief 设置一阶速度控制的比例系数
  *
  * @param __Omega_Kp 速度比例系数
@@ -176,9 +216,9 @@ inline float Class_Motor_DJI_C610_LESO::Get_Omega_Kp()
 }
 
 /**
- * @brief 设置一阶速度控制的电流限幅
+ * @brief 设置一阶速度ADRC控制器输出限幅
  *
- * @param __Omega_Current_Max 速度控制电流限幅
+ * @param __Omega_Current_Max 速度ADRC控制器输出限幅
  */
 inline void Class_Motor_DJI_C610_LESO::Set_Omega_Current_Max(float __Omega_Current_Max)
 {
@@ -186,9 +226,9 @@ inline void Class_Motor_DJI_C610_LESO::Set_Omega_Current_Max(float __Omega_Curre
 }
 
 /**
- * @brief 获取一阶速度控制的电流限幅
+ * @brief 获取一阶速度ADRC控制器输出限幅
  *
- * @return float 速度控制电流限幅
+ * @return float 速度ADRC控制器输出限幅
  */
 inline float Class_Motor_DJI_C610_LESO::Get_Omega_Current_Max()
 {
@@ -202,7 +242,7 @@ inline float Class_Motor_DJI_C610_LESO::Get_Omega_Current_Max()
  * @param __LESO_Dt 一阶LESO采样周期
  * @param __LESO_B 一阶LESO输入增益
  * @param __Omega_Kp 速度比例系数
- * @param __Omega_Current_Max 速度控制电流限幅
+ * @param __Omega_Current_Max 速度ADRC控制器输出限幅
  */
 inline void Class_Motor_DJI_C610_LESO::Set_Omega_ADRC(float __LESO_Frequency, float __LESO_Dt, float __LESO_B, float __Omega_Kp, float __Omega_Current_Max)
 {
@@ -264,6 +304,27 @@ inline void Class_Motor_DJI_C620_LESO::Set_Position_ADRC(float __LESO_Frequency,
 }
 
 /**
+ * @brief 设置二阶位置ADRC控制器输出限幅
+ *
+ * @param __Position_Current_Max 位置ADRC控制器输出限幅
+ */
+inline void Class_Motor_DJI_C620_LESO::Set_Position_Current_Max(float __Position_Current_Max)
+{
+    Position_Current_Max = __Position_Current_Max;
+    Reset_LESO();
+}
+
+/**
+ * @brief 获取二阶位置ADRC控制器输出限幅
+ *
+ * @return float 位置ADRC控制器输出限幅
+ */
+inline float Class_Motor_DJI_C620_LESO::Get_Position_Current_Max()
+{
+    return (Position_Current_Max);
+}
+
+/**
  * @brief 设置一阶速度控制的比例系数
  *
  * @param __Omega_Kp 速度比例系数
@@ -284,9 +345,9 @@ inline float Class_Motor_DJI_C620_LESO::Get_Omega_Kp()
 }
 
 /**
- * @brief 设置一阶速度控制的电流限幅
+ * @brief 设置一阶速度ADRC控制器输出限幅
  *
- * @param __Omega_Current_Max 速度控制电流限幅
+ * @param __Omega_Current_Max 速度ADRC控制器输出限幅
  */
 inline void Class_Motor_DJI_C620_LESO::Set_Omega_Current_Max(float __Omega_Current_Max)
 {
@@ -294,9 +355,9 @@ inline void Class_Motor_DJI_C620_LESO::Set_Omega_Current_Max(float __Omega_Curre
 }
 
 /**
- * @brief 获取一阶速度控制的电流限幅
+ * @brief 获取一阶速度ADRC控制器输出限幅
  *
- * @return float 速度控制电流限幅
+ * @return float 速度ADRC控制器输出限幅
  */
 inline float Class_Motor_DJI_C620_LESO::Get_Omega_Current_Max()
 {
@@ -310,7 +371,7 @@ inline float Class_Motor_DJI_C620_LESO::Get_Omega_Current_Max()
  * @param __LESO_Dt 一阶LESO采样周期
  * @param __LESO_B 一阶LESO输入增益
  * @param __Omega_Kp 速度比例系数
- * @param __Omega_Current_Max 速度控制电流限幅
+ * @param __Omega_Current_Max 速度ADRC控制器输出限幅
  */
 inline void Class_Motor_DJI_C620_LESO::Set_Omega_ADRC(float __LESO_Frequency, float __LESO_Dt, float __LESO_B, float __Omega_Kp, float __Omega_Current_Max)
 {

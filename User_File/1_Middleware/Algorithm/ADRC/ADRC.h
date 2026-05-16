@@ -11,17 +11,31 @@ class FirstOrderSystemADRC {
 public:
   // eso_f : 观测器带宽(Hz)  eso_dt : 采样时间   eso_b : 和模型相关，可从大往小试调
   // kp : pid控制器的Kp参数 max_out: 输出限幅
-  FirstOrderSystemADRC(float eso_f, float eso_dt, float eso_b, float pid_f, float max_out)
-      : LESO(eso_f, eso_dt, eso_b), MaxOut(max_out) {
+  FirstOrderSystemADRC(float eso_f, float dt, float eso_b, float pid_f, float max_out)
+      : LESO(eso_f, dt, eso_b), MaxOut(max_out), Ts(dt) {
     float omega = 2 * PI * pid_f;
     Kp = omega;
   }
 
   float Update(float target, float feedback) {
-    float pid_output = Kp * (target - feedback);
+    float error = target - feedback;
+    float pid_output = Kp * error;
     float output = (pid_output - LESO.Get_x2()) / LESO.Get_b();
     float output_limit = ClampAbs(output, MaxOut);
     LESO.Update(feedback,output_limit);
+    return output_limit;
+  }
+
+  void Init(float feedback) {
+    LESO.Init(feedback);
+  }
+
+  void Set_Kp(float kp) {
+    Kp = kp;
+  }
+
+  void Set_MaxOut(float max_out) {
+    MaxOut = max_out;
   }
 
   float Get_x1() { return LESO.Get_x1(); }
@@ -32,6 +46,7 @@ private:
   FirstOrderSystemESO LESO;
   float Kp;
   float MaxOut;
+  float Ts;
 
   float ClampAbs(float value, float limit) {
     if (value > limit) {
@@ -47,7 +62,7 @@ private:
 class SecondOrderSystemADRC {
 public:
   SecondOrderSystemADRC(float eso_f, float eso_dt, float eso_b, float pid_f, float max_out)
-      : LESO(eso_f, eso_dt, eso_b),  MaxOut(max_out) {
+      : LESO(eso_f, eso_dt, eso_b), MaxOut(max_out) {
     float omega = 2 * PI * pid_f;
     Kp = omega * omega;
     Kd = 2 * omega;
@@ -72,6 +87,22 @@ public:
     float output_limit = ClampAbs(output, MaxOut);
     LESO.Update(pos_feedback, output_limit);
     return output_limit;
+  }
+
+  void Init(float feedback) {
+    LESO.Init(feedback);
+  }
+
+  void Set_Kp(float kp) {
+    Kp = kp;
+  }
+
+  void Set_Kd(float kd) {
+    Kd = kd;
+  }
+
+  void Set_MaxOut(float max_out) {
+    MaxOut = max_out;
   }
 
   float Get_x1() { return LESO.Get_x1(); }

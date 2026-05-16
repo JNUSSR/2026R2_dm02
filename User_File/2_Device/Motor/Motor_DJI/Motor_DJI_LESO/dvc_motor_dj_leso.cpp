@@ -18,10 +18,11 @@ Class_Motor_DJI_C610_LESO::Class_Motor_DJI_C610_LESO(float __LESO_Frequency, flo
     LESO_B(__LESO_B),
     Omega_Kp(0.0f),
     Omega_Current_Max(10000.0f),
+    Position_Current_Max(10000.0f),
     Position_Kp(0.0f),
     Position_Kd(0.0f),
-    LESO_1st(__LESO_Frequency, __LESO_Dt, __LESO_B),
-    LESO_2nd(__LESO_Frequency, __LESO_Dt, __LESO_B)
+    Omega_ADRC(__LESO_Frequency, __LESO_Dt, __LESO_B, 0.0f, 10000.0f),
+    Position_ADRC(__LESO_Frequency, __LESO_Dt, __LESO_B, 0.0f, 10000.0f)
 {
 }
 
@@ -56,11 +57,8 @@ void Class_Motor_DJI_C610_LESO::TIM_Calculate_PeriodElapsedCallback()
     }
     case (Motor_DJI_Control_Method_OMEGA):
     {
-        LESO_1st.Init(Rx_Data.Now_Omega);
-        float omega_output = Omega_Kp * (Target_Omega + Feedforward_Omega - Rx_Data.Now_Omega);
-        Out = (omega_output - LESO_1st.Get_x2()) / LESO_1st.Get_b();
-        LESO_1st.Update(Rx_Data.Now_Omega, Out);
-        Basic_Math_Constrain(&Out, -Omega_Current_Max, Omega_Current_Max);
+        Omega_ADRC.Init(Rx_Data.Now_Omega);
+        Out = Omega_ADRC.Update(Target_Omega + Feedforward_Omega, Rx_Data.Now_Omega);
 
         break;
     }
@@ -68,11 +66,8 @@ void Class_Motor_DJI_C610_LESO::TIM_Calculate_PeriodElapsedCallback()
     {
         if (Angle_Mode == Motor_DJI_LESO_Angle_Mode_LESO_2ND)
         {
-            LESO_2nd.Init(Rx_Data.Now_Angle);
-
-            float position_output = Position_Kp * (Target_Angle - Rx_Data.Now_Angle) - Position_Kd * LESO_2nd.Get_x2();
-            Out = (position_output - LESO_2nd.Get_x3()) / LESO_2nd.Get_b();
-            LESO_2nd.Update(Rx_Data.Now_Angle, Out);
+            Position_ADRC.Init(Rx_Data.Now_Angle);
+            Out = Position_ADRC.Update(Target_Angle, Rx_Data.Now_Angle, 0.0f);
         }
         else
         {
@@ -105,8 +100,12 @@ void Class_Motor_DJI_C610_LESO::TIM_Calculate_PeriodElapsedCallback()
  */
 void Class_Motor_DJI_C610_LESO::Reset_LESO()
 {
-    LESO_1st = FirstOrderSystemESO(LESO_Frequency, LESO_Dt, LESO_B);
-    LESO_2nd = SecondOrderSystemESO(LESO_Frequency, LESO_Dt, LESO_B);
+    Omega_ADRC = FirstOrderSystemADRC(LESO_Frequency, LESO_Dt, LESO_B, 0.0f, Omega_Current_Max);
+    Omega_ADRC.Set_Kp(Omega_Kp);
+
+    Position_ADRC = SecondOrderSystemADRC(LESO_Frequency, LESO_Dt, LESO_B, 0.0f, Position_Current_Max);
+    Position_ADRC.Set_Kp(Position_Kp);
+    Position_ADRC.Set_Kd(Position_Kd);
 }
 
 /**
@@ -122,10 +121,11 @@ Class_Motor_DJI_C620_LESO::Class_Motor_DJI_C620_LESO(float __LESO_Frequency, flo
     LESO_B(__LESO_B),
     Omega_Kp(0.0f),
     Omega_Current_Max(16384.0f),
+    Position_Current_Max(16384.0f),
     Position_Kp(0.0f),
     Position_Kd(0.0f),
-    LESO_1st(__LESO_Frequency, __LESO_Dt, __LESO_B),
-    LESO_2nd(__LESO_Frequency, __LESO_Dt, __LESO_B)
+    Omega_ADRC(__LESO_Frequency, __LESO_Dt, __LESO_B, 0.0f, 16384.0f),
+    Position_ADRC(__LESO_Frequency, __LESO_Dt, __LESO_B, 0.0f, 16384.0f)
 {
 }
 
@@ -160,11 +160,8 @@ void Class_Motor_DJI_C620_LESO::TIM_Calculate_PeriodElapsedCallback()
     }
     case (Motor_DJI_Control_Method_OMEGA):
     {
-        LESO_1st.Init(Rx_Data.Now_Omega);
-        float omega_output = Omega_Kp * (Target_Omega + Feedforward_Omega - Rx_Data.Now_Omega);
-        Out = (omega_output - LESO_1st.Get_x2()) / LESO_1st.Get_b();
-        LESO_1st.Update(Rx_Data.Now_Omega, Out);
-        Basic_Math_Constrain(&Out, -Omega_Current_Max, Omega_Current_Max);
+        Omega_ADRC.Init(Rx_Data.Now_Omega);
+        Out = Omega_ADRC.Update(Target_Omega + Feedforward_Omega, Rx_Data.Now_Omega);
 
         break;
     }
@@ -172,11 +169,8 @@ void Class_Motor_DJI_C620_LESO::TIM_Calculate_PeriodElapsedCallback()
     {
         if (Angle_Mode == Motor_DJI_LESO_Angle_Mode_LESO_2ND)
         {
-            LESO_2nd.Init(Rx_Data.Now_Angle);
-
-            float position_output = Position_Kp * (Target_Angle - Rx_Data.Now_Angle) - Position_Kd * LESO_2nd.Get_x2();
-            Out = (position_output - LESO_2nd.Get_x3()) / LESO_2nd.Get_b();
-            LESO_2nd.Update(Rx_Data.Now_Angle, Out);
+            Position_ADRC.Init(Rx_Data.Now_Angle);
+            Out = Position_ADRC.Update(Target_Angle, Rx_Data.Now_Angle, 0.0f);
         }
         else
         {
@@ -209,6 +203,10 @@ void Class_Motor_DJI_C620_LESO::TIM_Calculate_PeriodElapsedCallback()
  */
 void Class_Motor_DJI_C620_LESO::Reset_LESO()
 {
-    LESO_1st = FirstOrderSystemESO(LESO_Frequency, LESO_Dt, LESO_B);
-    LESO_2nd = SecondOrderSystemESO(LESO_Frequency, LESO_Dt, LESO_B);
+    Omega_ADRC = FirstOrderSystemADRC(LESO_Frequency, LESO_Dt, LESO_B, 0.0f, Omega_Current_Max);
+    Omega_ADRC.Set_Kp(Omega_Kp);
+
+    Position_ADRC = SecondOrderSystemADRC(LESO_Frequency, LESO_Dt, LESO_B, 0.0f, Position_Current_Max);
+    Position_ADRC.Set_Kp(Position_Kp);
+    Position_ADRC.Set_Kd(Position_Kd);
 }
