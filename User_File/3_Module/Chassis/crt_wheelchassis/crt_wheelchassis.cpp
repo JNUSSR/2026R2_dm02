@@ -112,27 +112,11 @@ void Class_Chassis_Omni::Output_To_Motor()
  */
 void Class_Chassis_Mecanum::Init()
 {
-    // PID初始化
-   for (int i = 0; i < 4; i++)
-    {
-        if (i == 0) // 左前轮
-        {
-            Chassis_Motor[i].PID_Omega.Init(1200.0f, 500.0f, 0.0f, 0.0f, 10000.0f, 12000.0f);
-        }
-        else if (i == 2) // 左后轮
-        {
-            Chassis_Motor[i].PID_Omega.Init(1200.0f, 500.0f, 0.0f, 0.0f, 10000.0f, 12000.0f);
-        }
-        else // 右前轮和右后轮
-        {
-            Chassis_Motor[i].PID_Omega.Init(1200.0f, 500.0f, 0.0f, 0.0f, 10000.0f, 12000.0f);
-        }    
-    }
-    
     // 电机初始化
     for (int i = 0; i < 4; i++)
     {
         Chassis_Motor[i].Init(&hfdcan1, Chassis_Motor_Id_Enum[i], Motor_DJI_Control_Method_OMEGA, 19.0f);
+        Chassis_Motor[i].Set_Omega_ADRC(20.0f, 0.001f, 0.05f, 2.0f * PI * 5.0f, 10000.0f);
     }
 }
 
@@ -203,7 +187,7 @@ void Class_Chassis_Mecanum::Kinematics_Inverse_Resolution()
     Target_Wheel_Omega[2] = (vx - vy + vw * k) / Wheel_Radius;
 
     // 右后轮 (motor_chassis[3])
-    Target_Wheel_Omega[3] = (-vx - vy + vw * k) / Wheel_Radius;
+    Target_Wheel_Omega[3] = (-vx - vy + vw * k) / Wheel_Radius; 
 }
 
 

@@ -21,6 +21,7 @@ extern "C" {
 #include "alg_basic.h"
 #include "alg_pid.h"
 #include "2_Device/Motor/Motor_DJI/dvc_motor_dji.h"
+#include "2_Device/Motor/Motor_DJI/Motor_DJI_LESO/dvc_motor_dji_leso.h"
 
 // STM32F427 uses Cortex-M4; CMSIS-DSP requires one ARM_MATH_* core macro.
 #ifndef ARM_MATH_CM4
@@ -178,8 +179,8 @@ protected :
 class Class_Chassis_Mecanum : public Class_Chassis_Base 
 {
 public:
-    // 4个底盘电机对象 
-    Class_Motor_DJI_C620 Chassis_Motor[4];
+    // 4个底盘电机对象
+    Class_Motor_DJI_C620_LESO Chassis_Motor[4];
     
     // 初始化函数，重写基类的Init
     virtual void Init(void) override;
