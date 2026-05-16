@@ -1,6 +1,6 @@
 #include "climbing_controller.h"
 #include "fdcan.h"
-
+#include "ChassisTask.h"   
 
 ClimbingController::ClimbingController()
     : climb_state_(STEP_IDLE),              // 状态机初始为 IDLE
@@ -66,6 +66,11 @@ void ClimbingController::HandleStateTransition(uint32_t current_time, uint8_t st
         case STEP_SETUP:
             planner_front_pos_.Plan(front_now, start_pos_front_ + (is_20cm ? POS_FRONT_RETRACT_20cm : POS_FRONT_RETRACT_40cm), TIME_SETUP / 1000.0f);
             planner_rear_pos_.Plan(rear_now, start_pos_rear_ + (is_20cm ? POS_REAR_RETRACT_20cm : POS_REAR_RETRACT_40cm), TIME_SETUP / 1000.0f);
+            break;
+        
+        case STEP_CHASSIS_APPROACH:
+            planner_front_pos_.Plan(front_now, start_pos_front_ + (is_20cm ? POS_FRONT_RETRACT_20cm : POS_FRONT_RETRACT_40cm), TIME_CHASSIS_APPROACH / 1000.0f);
+            planner_rear_pos_.Plan(rear_now, start_pos_rear_ + (is_20cm ? POS_REAR_RETRACT_20cm : POS_REAR_RETRACT_40cm), TIME_CHASSIS_APPROACH / 1000.0f);
             break;
 
         case STEP_TOUCH_DOWN:
@@ -212,10 +217,6 @@ void ClimbingController::UpdatePidAndSlopeByState(void)
 
 void ClimbingController::UpdateStateTargets(uint32_t current_time)
 {
-    // ==========================================
-    // 核心修复 2: 取消原本复杂且危险的三目运算符判定
-    // 轮子无脑跟踪 wheel_target_angle 即可
-    // ==========================================
     slope_wheel_l_angle_.Set_Target(wheel_target_angle_l_);
     slope_wheel_r_angle_.Set_Target(wheel_target_angle_r_);
 
@@ -387,7 +388,7 @@ void ClimbingController::AutoStartFromTouch20cm(void)
     auto_running_ = 1;
     descend_mode_ = 0;
     up_mode_ = CLIMB_UP_MODE_20CM;
-    climb_state_ = STEP_TOUCH_DOWN;
+    climb_state_ = STEP_CHASSIS_APPROACH;
     auto_state_enter_tick_ = HAL_GetTick();
 }
 
@@ -397,7 +398,7 @@ void ClimbingController::AutoStartFromTouch40cm(void)
     auto_running_ = 1;
     descend_mode_ = 0;
     up_mode_ = CLIMB_UP_MODE_40CM;
-    climb_state_ = STEP_TOUCH_DOWN;
+    climb_state_ = STEP_CHASSIS_APPROACH;
     auto_state_enter_tick_ = HAL_GetTick();
 }
 
@@ -461,6 +462,13 @@ void ClimbingController::AutoTask1ms(void)
     // ---------- 上台阶自动流程 ----------
     case STEP_SETUP:
         TryTimeTransition(now, TIME_SETUP, STEP_TOUCH_DOWN);
+        break;
+    case STEP_CHASSIS_APPROACH:
+        Chassis_Set_Target(0.1f, 0.0f, 0.0f);  // 持续给底盘下发 0.1m/s 的向前速度
+        // 500ms 后跳转到 TOUCH_DOWN 状态
+        if (TryTimeTransition(now, TIME_CHASSIS_APPROACH, STEP_TOUCH_DOWN)) {
+            Chassis_Set_Target(0.0f, 0.0f, 0.0f); //进入下一状态瞬间，立刻刹停底盘！
+        }
         break;
     case STEP_TOUCH_DOWN:
         TryTimeTransition(now, TIME_TOUCH, STEP_GLOBAL_LIFT);
