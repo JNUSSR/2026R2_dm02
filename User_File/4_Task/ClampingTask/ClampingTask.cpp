@@ -21,7 +21,7 @@ void Clamping_CAN_Rx_Dispatch(FDCAN_RxHeaderTypeDef &Header, uint8_t *Buffer)
 
 void ClampingTask(void)
 {
-    clampingCtrl.Init(&hfdcan1);
+    clampingCtrl.Init(&hfdcan2);
     for (;;)
     {
         clampingCtrl.TaskEntry1ms();
