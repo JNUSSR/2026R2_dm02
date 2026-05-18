@@ -10,7 +10,7 @@
     #error Wrong include order: MAVLINK_R2_V2.H MUST NOT BE DIRECTLY USED. Include mavlink.h from the same directory instead or set ALL AND EVERY defines from MAVLINK.H manually accordingly, including the #define MAVLINK_H call.
 #endif
 
-#define MAVLINK_R2_V2_XML_HASH -53279337908117539
+#define MAVLINK_R2_V2_XML_HASH 3159716745646686419
 
 #ifdef __cplusplus
 extern "C" {
@@ -67,7 +67,8 @@ typedef enum CLAMPING_CMD_TYPE
    CLAMPING_CMD_GRAB=1, /* Close the claw to clamp the weapon head. Maps to ClampingController::OpenSolenoid(). | */
    CLAMPING_CMD_MOVE_TO_RESET=2, /* Reset the mechanism angle back to 0 deg. Maps to ClampingController::MoveToResetAngle(). | */
    CLAMPING_CMD_RELEASE=3, /* Release the claw. Maps to ClampingController::ReleaseSolenoid(). | */
-   CLAMPING_CMD_TYPE_ENUM_END=4, /*  | */
+   CLAMPING_CMD_MOVE_TO_DOCK=4, /* Raise to the docking position. | */
+   CLAMPING_CMD_TYPE_ENUM_END=5, /*  | */
 } CLAMPING_CMD_TYPE;
 #endif
 

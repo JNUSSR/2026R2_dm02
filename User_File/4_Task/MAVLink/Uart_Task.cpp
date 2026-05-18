@@ -91,6 +91,9 @@ void UartTask() {
                             case CLAMPING_CMD_RELEASE:
                                 Clamping_Get_Controller().ReleaseSolenoid();
                                 break;
+                            case CLAMPING_CMD_MOVE_TO_DOCK:
+
+                                break;
                         }
                     }
                 }
