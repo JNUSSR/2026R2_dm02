@@ -17,8 +17,11 @@ void Climbing_CAN_Rx_Dispatch(FDCAN_RxHeaderTypeDef &Header, uint8_t *Buffer)
 
 void ClimbingTask(void)
 {
-    // 与 docking 一致: 任务入口里完成一次初始化
+    //任务入口里完成一次初始化
     climbingCtrl.Init(&hfdcan1);
+
+    osDelay(2000); // 等待系统稳定
+    Climbing_Init_Pose_Start();
     for (;;)
     {
         // 1ms 周期: 先推进自动状态, 再执行主控制

@@ -510,8 +510,8 @@ void ClimbingController::TaskEntry1ms(void)
     // 3. 初始化姿态保持
     if (init_pose_active_ != 0U) {
         if (init_pose_planned_ == 0U) {
-            planner_front_pos_.Plan(motor_lift_front_.Get_Now_Angle(), start_pos_front_ + POS_FRONT_RETRACT_20cm, TIME_SETUP / 1000.0f);
-            planner_rear_pos_.Plan(motor_lift_rear_.Get_Now_Angle(), start_pos_rear_ + POS_REAR_RETRACT_20cm, TIME_SETUP / 1000.0f);
+            planner_front_pos_.Plan(motor_lift_front_.Get_Now_Angle(), start_pos_front_ + POS_FRONT_RETRACT_20cm, 3000 / 1000.0f);
+            planner_rear_pos_.Plan(motor_lift_rear_.Get_Now_Angle(), start_pos_rear_ + POS_REAR_RETRACT_20cm, 3000 / 1000.0f);
             init_pose_planned_ = 1U;
         }
         slope_wheel_l_angle_.Set_Target(motor_wheel_l_.Get_Now_Angle());

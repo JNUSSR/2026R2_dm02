@@ -127,7 +127,7 @@
 
 // --- 上台阶时间参数 ---
 #define TIME_SETUP           1500  // 给2秒让它缩腿
-#define TIME_CHASSIS_APPROACH 500  // 底盘向前微调贴紧台阶的时间 (0.5s)
+#define TIME_CHASSIS_APPROACH 800  // 底盘向前微调贴紧台阶的时间 (0.8s)
 #define TIME_TOUCH           500  // 触地时间
 #define TIME_LIFT            1500  // 顶升时间
 #define TIME_LIFT_REAR_DELAY 100   // 顶升阶段后脚延时启动
