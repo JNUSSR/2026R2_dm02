@@ -28,6 +28,14 @@ void ClampingController::Init(FDCAN_HandleTypeDef *hcan)
         0.0f,
         CLAMPING_PID_ANGLE_OUT_MAX,
         CLAMPING_PID_ANGLE_I_OUT_MAX);
+    motor_clamp_2006_.Set_Position_ADRC(
+        CLAMPING_LESO_ANGLE_FREQ,
+        0.001f,
+        CLAMPING_LESO_ANGLE_GAIN,
+        CLAMPING_LESO_ANGLE_KP,
+        CLAMPING_LESO_ANGLE_KD
+    );
+    motor_clamp_2006_.Set_Angle_Mode(Motor_DJI_LESO_Angle_Mode_MIX);
 
     motor_clamp_2006_.Init(hcan, CLAMPING_MOTOR_CAN_ID, Motor_DJI_Control_Method_ANGLE);
     motor_clamp_2006_.Set_Target_Angle(CLAMPING_TARGET_ANGLE_RESET_RAD);
@@ -60,6 +68,11 @@ void ClampingController::MoveToResetAngle(void)
     PlanToAngle(CLAMPING_TARGET_ANGLE_RESET_RAD);
 }
 
+void ClampingController::MoveToDockAngle(void)
+{
+    PlanToAngle(CLAMPING_TARGET_ANGLE_DOCK_RAD);
+}
+
 void ClampingController::OpenSolenoid(void)
 {
     Cylinder1_Push();
@@ -70,7 +83,7 @@ void ClampingController::ReleaseSolenoid(void)
     Cylinder1_Pull();
 }
 
-Class_Motor_DJI_C610 &ClampingController::GetMotor(void)
+Class_Motor_DJI_C610_LESO &ClampingController::GetMotor(void)
 {
     return motor_clamp_2006_;
 }

@@ -18,6 +18,7 @@ enum Enum_Motor_DJI_LESO_Angle_Mode
 {
     Motor_DJI_LESO_Angle_Mode_ORIGIN = 0,
     Motor_DJI_LESO_Angle_Mode_LESO_2ND,
+    Motor_DJI_LESO_Angle_Mode_MIX,
 };
 
 /**
