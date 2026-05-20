@@ -1,16 +1,16 @@
 /** @file
- *  @brief MAVLink comm protocol generated from R2_V2.xml
+ *  @brief MAVLink comm protocol generated from R2_V3.xml
  *  @see http://mavlink.org
  */
 #pragma once
-#ifndef MAVLINK_R2_V2_H
-#define MAVLINK_R2_V2_H
+#ifndef MAVLINK_R2_V3_H
+#define MAVLINK_R2_V3_H
 
 #ifndef MAVLINK_H
-    #error Wrong include order: MAVLINK_R2_V2.H MUST NOT BE DIRECTLY USED. Include mavlink.h from the same directory instead or set ALL AND EVERY defines from MAVLINK.H manually accordingly, including the #define MAVLINK_H call.
+    #error Wrong include order: MAVLINK_R2_V3.H MUST NOT BE DIRECTLY USED. Include mavlink.h from the same directory instead or set ALL AND EVERY defines from MAVLINK.H manually accordingly, including the #define MAVLINK_H call.
 #endif
 
-#define MAVLINK_R2_V2_XML_HASH 3159716745646686419
+#define MAVLINK_R2_V3_XML_HASH -7589283623048948717
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,7 +28,7 @@ extern "C" {
 
 #include "../protocol.h"
 
-#define MAVLINK_ENABLED_R2_V2
+#define MAVLINK_ENABLED_R2_V3
 
 // ENUM DEFINITIONS
 
@@ -54,7 +54,9 @@ typedef enum CLIMBING_CMD_TYPE
    CLIMBING_CMD_EXECUTE_UP_20CM=2, /* Execute 20cm climbing after the upper computer has moved the chassis to the edge. Maps to Climbing_Auto_Start_From_Touch_20cm(). | */
    CLIMBING_CMD_EXECUTE_UP_40CM=3, /* Execute 40cm climbing after the upper computer has moved the chassis to the edge. Maps to Climbing_Auto_Start_From_Touch_40cm(). | */
    CLIMBING_CMD_EXECUTE_DOWN_20CM=4, /* Execute 20cm descending after the upper computer has moved the chassis to the edge. Maps to Climbing_Descend_Auto_Start_20cm(). | */
-   CLIMBING_CMD_TYPE_ENUM_END=5, /*  | */
+   CLIMBING_CMD_WEAPON_HEAD_CLAMP_START=5, /* Start weapon head clamping. Maps to Climbing_WeaponHeadClampStart(). | */
+   CLIMBING_CMD_WEAPON_ROD_DOCK_START=6, /* Start weapon rod docking. Maps to Climbing_WeaponRodDockStart(). | */
+   CLIMBING_CMD_TYPE_ENUM_END=7, /*  | */
 } CLIMBING_CMD_TYPE;
 #endif
 
@@ -68,7 +70,9 @@ typedef enum CLAMPING_CMD_TYPE
    CLAMPING_CMD_MOVE_TO_RESET=2, /* Reset the mechanism angle back to 0 deg. Maps to ClampingController::MoveToResetAngle(). | */
    CLAMPING_CMD_RELEASE=3, /* Release the claw. Maps to ClampingController::ReleaseSolenoid(). | */
    CLAMPING_CMD_MOVE_TO_DOCK=4, /* Raise to the docking position. | */
-   CLAMPING_CMD_TYPE_ENUM_END=5, /*  | */
+   CLAMPING_CMD_ADJUST=5, /* Adjust the chassis position for clamping. | */
+   CLAMPING_CMD_START=6, /* Start the clamping process. | */
+   CLAMPING_CMD_TYPE_ENUM_END=7, /*  | */
 } CLAMPING_CMD_TYPE;
 #endif
 
@@ -93,7 +97,7 @@ typedef enum CLAMPING_CMD_TYPE
 
 
 
-#if MAVLINK_R2_V2_XML_HASH == MAVLINK_PRIMARY_XML_HASH
+#if MAVLINK_R2_V3_XML_HASH == MAVLINK_PRIMARY_XML_HASH
 # define MAVLINK_MESSAGE_INFO {MAVLINK_MESSAGE_INFO_ARM_CONTROL, MAVLINK_MESSAGE_INFO_CHASSIS_VELOCITY_CMD, MAVLINK_MESSAGE_INFO_CLIMBING_CMD, MAVLINK_MESSAGE_INFO_CLAMPING_CMD}
 # define MAVLINK_MESSAGE_NAMES {{ "ARM_CONTROL", 200 }, { "CHASSIS_VELOCITY_CMD", 201 }, { "CLAMPING_CMD", 203 }, { "CLIMBING_CMD", 202 }}
 # if MAVLINK_COMMAND_24BIT
@@ -104,4 +108,4 @@ typedef enum CLAMPING_CMD_TYPE
 #ifdef __cplusplus
 }
 #endif // __cplusplus
-#endif // MAVLINK_R2_V2_H
+#endif // MAVLINK_R2_V3_H

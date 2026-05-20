@@ -73,6 +73,12 @@ void UartTask() {
                             case CLIMBING_CMD_EXECUTE_DOWN_20CM:
                                 Climbing_Descend_Auto_Start_20cm();
                                 break;
+                            case CLIMBING_CMD_WEAPON_HEAD_CLAMP_START:
+
+                                break;
+                            case CLIMBING_CMD_WEAPON_ROD_DOCK_START:
+
+                                break;
                         }
                     } else if (msg.msgid == MAVLINK_MSG_ID_CLAMPING_CMD) {
                         mavlink_clamping_cmd_t clamping_cmd;
@@ -92,6 +98,12 @@ void UartTask() {
                                 Clamping_Get_Controller().ReleaseSolenoid();
                                 break;
                             case CLAMPING_CMD_MOVE_TO_DOCK:
+
+                                break;
+                            case CLAMPING_CMD_ADJUST:
+
+                                break;
+                            case CLAMPING_CMD_START:
 
                                 break;
                         }

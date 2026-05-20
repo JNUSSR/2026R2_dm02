@@ -1,10 +1,10 @@
 /** @file
- *    @brief MAVLink comm protocol testsuite generated from R2_V2.xml
+ *    @brief MAVLink comm protocol testsuite generated from R2_V3.xml
  *    @see https://mavlink.io/en/
  */
 #pragma once
-#ifndef R2_V2_TESTSUITE_H
-#define R2_V2_TESTSUITE_H
+#ifndef R2_V3_TESTSUITE_H
+#define R2_V3_TESTSUITE_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -13,12 +13,12 @@ extern "C" {
 #ifndef MAVLINK_TEST_ALL
 #define MAVLINK_TEST_ALL
 
-static void mavlink_test_R2_V2(uint8_t, uint8_t, mavlink_message_t *last_msg);
+static void mavlink_test_R2_V3(uint8_t, uint8_t, mavlink_message_t *last_msg);
 
 static void mavlink_test_all(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
 {
 
-    mavlink_test_R2_V2(system_id, component_id, last_msg);
+    mavlink_test_R2_V3(system_id, component_id, last_msg);
 }
 #endif
 
@@ -263,7 +263,7 @@ static void mavlink_test_clamping_cmd(uint8_t system_id, uint8_t component_id, m
 #endif
 }
 
-static void mavlink_test_R2_V2(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
+static void mavlink_test_R2_V3(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
 {
     mavlink_test_arm_control(system_id, component_id, last_msg);
     mavlink_test_chassis_velocity_cmd(system_id, component_id, last_msg);
@@ -274,4 +274,4 @@ static void mavlink_test_R2_V2(uint8_t system_id, uint8_t component_id, mavlink_
 #ifdef __cplusplus
 }
 #endif // __cplusplus
-#endif // R2_V2_TESTSUITE_H
+#endif // R2_V3_TESTSUITE_H
