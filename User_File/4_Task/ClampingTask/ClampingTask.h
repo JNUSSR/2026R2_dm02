@@ -12,6 +12,9 @@ void ClampingTask(void);
 void Clamping_Task_Init(void);
 void Clamping_CAN_Rx_Dispatch(FDCAN_RxHeaderTypeDef &Header, uint8_t *Buffer);
 
+void Clamping_Auto_Start(void);
+void Clamping_Auto_Adjust(void);
+
 #ifdef __cplusplus
 }
 

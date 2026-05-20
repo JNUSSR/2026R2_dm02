@@ -14,18 +14,18 @@
 #define CLAMPING_PLAN_DT_S              (0.001f)
 #define CLAMPING_MOVE_DURATION_S        (0.3f)
 
-#define CLAMPING_PID_OMEGA_KP           (2100.0f)
+#define CLAMPING_PID_OMEGA_KP           (2200.0f)
 #define CLAMPING_PID_OMEGA_KI           (500.0f)
 #define CLAMPING_PID_ANGLE_KP           (15.0f)
 #define CLAMPING_PID_ANGLE_KI           (0.0f)
 #define CLAMPING_PID_OMEGA_OUT_MAX      (5000.0f)
-#define CLAMPING_PID_OMEGA_I_OUT_MAX    (6000.0f)
+#define CLAMPING_PID_OMEGA_I_OUT_MAX    (7000.0f)
 #define CLAMPING_PID_ANGLE_OUT_MAX      (10.0f)
 #define CLAMPING_PID_ANGLE_I_OUT_MAX    (15.0f)
 
-#define CLAMPING_LESO_ANGLE_FREQ        (10.0f)
+#define CLAMPING_LESO_ANGLE_FREQ        (8.0f)
 #define CLAMPING_LESO_ANGLE_GAIN        (0.04f)
-#define CLAMPING_LESO_ANGLE_KP          (4.0f)
+#define CLAMPING_LESO_ANGLE_KP          (6.0f)
 #define CLAMPING_LESO_ANGLE_KD          (0.0f)
 
 class ClampingController

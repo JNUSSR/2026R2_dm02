@@ -2,6 +2,7 @@
 
 #include "cmsis_os2.h"
 #include "main.h"
+#include "ChassisTask.h"
 
 ClampingController clampingCtrl;
 
@@ -32,4 +33,25 @@ void ClampingTask(void)
 void Clamping_Task_Init(void)
 {
     clampingCtrl.Init(&hfdcan1);
+}
+
+void Clamping_Auto_Start(void)
+{
+    Clamping_Auto_Adjust();
+    osDelay(1000);
+    Chassis_Set_Target(0.1f,0.0f,0.0f);
+    osDelay(1400);
+    Chassis_Set_Target(0.0f,0.0f,0.0f);
+    osDelay(1000);
+    clampingCtrl.OpenSolenoid();
+    osDelay(1000);
+    Chassis_Set_Target(-0.1f,0.0f,0.0f);
+    osDelay(1400);
+    Chassis_Set_Target(0.0f,0.0f,0.0f);
+}
+
+void Clamping_Auto_Adjust(void)
+{
+    clampingCtrl.MoveToClampAngle();
+    clampingCtrl.ReleaseSolenoid();
 }

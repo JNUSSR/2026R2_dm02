@@ -69,6 +69,12 @@ void Class_Motor_DJI_C610_LESO::TIM_Calculate_PeriodElapsedCallback()
             Position_ADRC.Init(Rx_Data.Now_Angle);
             Out = Position_ADRC.Update(Target_Angle, Rx_Data.Now_Angle, 0.0f);
         }
+        else if (Angle_Mode == Motor_DJI_LESO_Angle_Mode_MIX)
+        {
+            PID_Calculate();
+            Position_ADRC.Init(Rx_Data.Now_Angle);
+            Out = Basic_Math_Constrain(Position_ADRC.Update(Target_Angle, Rx_Data.Now_Angle, 0.0f), -2000.0f, 2000.0f) + Target_Torque;
+        }
         else
         {
             PID_Calculate();
@@ -171,12 +177,6 @@ void Class_Motor_DJI_C620_LESO::TIM_Calculate_PeriodElapsedCallback()
         {
             Position_ADRC.Init(Rx_Data.Now_Angle);
             Out = Position_ADRC.Update(Target_Angle, Rx_Data.Now_Angle, 0.0f);
-        }
-        else if (Angle_Mode == Motor_DJI_LESO_Angle_Mode_MIX)
-        {
-            PID_Calculate();
-            Position_ADRC.Init(Rx_Data.Now_Angle);
-            Out = Position_ADRC.Update(Target_Angle, Rx_Data.Now_Angle, 0.0f) + Target_Torque;
         }
         else
         {

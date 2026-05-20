@@ -98,13 +98,13 @@ void UartTask() {
                                 Clamping_Get_Controller().ReleaseSolenoid();
                                 break;
                             case CLAMPING_CMD_MOVE_TO_DOCK:
-
+                                Clamping_Get_Controller().MoveToDockAngle();
                                 break;
                             case CLAMPING_CMD_ADJUST:
-
+                                Clamping_Auto_Adjust();
                                 break;
                             case CLAMPING_CMD_START:
-
+                                Clamping_Auto_Start();
                                 break;
                         }
                     }
