@@ -93,11 +93,6 @@ void Climbing_Auto_Task_1ms(void)
     climbingCtrl.AutoTask1ms();
 }
 
-void Climbing_Manual_Next(void)
-{
-    climbingCtrl.ManualNext();
-}
-
 void Climbing_Descend_Manual_Next(void)
 {
     climbingCtrl.DescendManualNext();
@@ -106,4 +101,14 @@ void Climbing_Descend_Manual_Next(void)
 void Climbing_Emergency_Stop(void)
 {
     climbingCtrl.EmergencyStop();
+}
+
+void Climbing_WeaponRodDockStart(void) // 对接武器杆
+{
+    climbingCtrl.WeaponRodDockStart();
+}
+
+void Climbing_WeaponHeadClampStart(void) // 夹武器头
+{
+    climbingCtrl.WeaponHeadClampStart();
 }

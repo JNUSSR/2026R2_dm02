@@ -43,10 +43,8 @@ void ClimbingController::HandleStateTransition(uint32_t current_time, uint8_t st
     float rear_now  = motor_lift_rear_.Get_Now_Angle();
     bool is_20cm = (up_mode_ == CLIMB_UP_MODE_20CM);
 
-    // ==========================================
     // 核心修复 1: 默认让所有状态的轮子目标锁定在当前起点
     // 这将彻底斩断后续状态下的"飞车"正反馈循环
-    // ==========================================
     wheel_target_angle_l_ = wheel_start_l;
     wheel_target_angle_r_ = wheel_start_r;
 
@@ -118,10 +116,21 @@ void ClimbingController::HandleStateTransition(uint32_t current_time, uint8_t st
             planner_front_pos_.Plan(front_now, start_pos_front_ + DESCEND_FRONT_RAISE_TARGET, TIME_DESC_RAISE / 1000.0f);
             planner_rear_pos_.Plan(rear_now, start_pos_rear_ + DESCEND_REAR_RAISE_TARGET, TIME_DESC_RAISE / 1000.0f);
             break;
+
+        case STEP_WEAPON_HEAD_CLAMP:
+            // 前腿：平滑推到设定的夹头位置
+            planner_front_pos_.Plan(front_now, start_pos_front_ + POS_FRONT_WEAPON_HEAD, TIME_WEAPON_ACTION / 1000.0f);
+            planner_rear_pos_.Plan(rear_now, start_pos_rear_ + POS_REAR_Init, TIME_WEAPON_ACTION / 1000.0f);
+            break;
+
+        case STEP_WEAPON_ROD_DOCK:
+            // 前腿：平滑推到设定的接杆位置
+            planner_front_pos_.Plan(front_now, start_pos_front_ + POS_FRONT_WEAPON_ROD, TIME_WEAPON_ACTION / 1000.0f);
+            planner_rear_pos_.Plan(rear_now, start_pos_rear_ + POS_REAR_Init, TIME_WEAPON_ACTION / 1000.0f);
+            break;
         default:
             break;
     }
-
     prev_climb_state_ = climb_state_;
 }
 
@@ -402,7 +411,7 @@ void ClimbingController::AutoStartFromTouch40cm(void)
     auto_state_enter_tick_ = HAL_GetTick();
 }
 
-void ClimbingController::DescendAutoStart(void)
+void ClimbingController::DescendAutoStart20cm(void)
 {
     init_pose_active_ = 0;
     auto_running_ = 1;
@@ -413,9 +422,26 @@ void ClimbingController::DescendAutoStart(void)
     auto_state_enter_tick_ = HAL_GetTick();
 }
 
-void ClimbingController::DescendAutoStart20cm(void)
+// 夹武器头
+void ClimbingController::WeaponHeadClampStart(void)
 {
-    DescendAutoStart();
+    init_pose_active_ = 0;   // 关闭初始化姿态强制接管
+    auto_running_ = 0;       // 关闭自动流程
+    descend_mode_ = 0;
+    
+    climb_state_ = STEP_WEAPON_HEAD_CLAMP;
+    state_tick_ = HAL_GetTick();
+}
+
+// 对接武器杆
+void ClimbingController::WeaponRodDockStart(void)
+{
+    init_pose_active_ = 0;
+    auto_running_ = 0;
+    descend_mode_ = 0;
+    
+    climb_state_ = STEP_WEAPON_ROD_DOCK;
+    state_tick_ = HAL_GetTick();
 }
 
 void ClimbingController::InitPoseStart(void)
@@ -510,8 +536,8 @@ void ClimbingController::TaskEntry1ms(void)
     // 3. 初始化姿态保持
     if (init_pose_active_ != 0U) {
         if (init_pose_planned_ == 0U) {
-            planner_front_pos_.Plan(motor_lift_front_.Get_Now_Angle(), start_pos_front_ + POS_FRONT_RETRACT_20cm, 3000 / 1000.0f);
-            planner_rear_pos_.Plan(motor_lift_rear_.Get_Now_Angle(), start_pos_rear_ + POS_REAR_RETRACT_20cm, 3000 / 1000.0f);
+            planner_front_pos_.Plan(motor_lift_front_.Get_Now_Angle(), start_pos_front_ + POS_FRONT_Init, 3000 / 1000.0f);
+            planner_rear_pos_.Plan(motor_lift_rear_.Get_Now_Angle(), start_pos_rear_ + POS_REAR_Init, 3000 / 1000.0f);
             init_pose_planned_ = 1U;
         }
         slope_wheel_l_angle_.Set_Target(motor_wheel_l_.Get_Now_Angle());

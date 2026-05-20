@@ -29,6 +29,8 @@ void Climbing_Descend_Auto_Start_20cm(void);
 void Climbing_Init_Pose_Start(void);
 void Climbing_Auto_Task_1ms(void);
 uint8_t Climbing_Is_Auto_Running(void);
+void Climbing_WeaponRodDockStart(void);
+void Climbing_WeaponHeadClampStart(void);
 
 // 手动调试接口
 void Climbing_Manual_Next(void);

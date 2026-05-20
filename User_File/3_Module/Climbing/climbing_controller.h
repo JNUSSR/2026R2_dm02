@@ -75,9 +75,13 @@
 #define DESCEND_FRONT_RAISE_TARGET       movingmm_front(0.0f)
 #define DESCEND_REAR_RAISE_TARGET        movingmm_rear(-210.0f)
 
-// 下台阶：状态7 脱离台阶，轮子再前移 0.1m
-// #define WHEEL_TRAVEL_DESCEND_RELEASE_M   (0.18f)
-// #define WHEEL_TRAVEL_DESCEND_RELEASE_RAD (WHEEL_TRAVEL_DESCEND_RELEASE_M / WHEEL_RADIUS_M)
+// ==========================================
+// 武器机构对接位置与时间参数
+// ==========================================
+// 夹武器头前腿位置 (请根据实际物理高度微调)
+#define POS_FRONT_WEAPON_HEAD    movingmm_front(-150.0f) 
+// 对接武器杆前腿位置 (请根据实际物理高度微调)
+#define POS_FRONT_WEAPON_ROD     movingmm_front(-200.0f) 
 
 // ==========================================
 // 2. 速度、斜坡、时间参数
@@ -105,10 +109,6 @@
 #define PID_WHEEL_ANGLE_KP            (10.0f)
 #define PID_WHEEL_ANGLE_KI            (0.0f)
 #define WHEEL_CREEP_OMEGA_RADPS       (0.3f)
-
-#define SETUP_TEST_REAR_DIR          (1.0f)
-#define SETUP_TEST_REAR_COMP         (2200.0f)
-
 
 // 动态PID参数（按工况切换）
 #define PID_FRONT_OMEGA_KP_NORMAL   (138.5f) //正常前轮P
@@ -140,7 +140,10 @@
 #define TIME_DESC_GLOBAL_DOWN  1000 // 下台阶：状态4 全局下降时间
 #define DESCEND_DRIVE_TIME_MS  2000 // 下台阶：状态5 平移时间
 #define TIME_DESC_RAISE      2000 // 下台阶：状态6 抬升时间
-// #define TIME_DESC_RELEASE    3000 // 下台阶：状态7 脱离时间
+
+//夹武器头对应时间参数
+#define TIME_WEAPON_ACTION       1500// 武器动作统一执行时间 (1.5秒平滑到位)
+
 
 // ==========================================
 // 3. 状态定义
@@ -160,9 +163,10 @@ typedef enum {
     STEP_DESCEND_TOUCH,       // 下台阶: 触地
     STEP_DESCEND_GLOBAL_DOWN, // 下台阶: 全局下降
     STEP_DESCEND_DRIVE,       // 下台阶: 轮子平移
-    STEP_DESCEND_RAISE,       // 下台阶: 抬起
-    // STEP_DESCEND_RELEASE,     // 下台阶: 轮子前移脱离台阶
-    // STEP_DESCEND_DONE         // 下台阶完成
+    STEP_DESCEND_RAISE,       // 下台阶: 抬起 最后是由上位机发指令让车复位
+
+    STEP_WEAPON_HEAD_CLAMP,   // 夹武器头专属状态
+    STEP_WEAPON_ROD_DOCK      // 对接武器杆专属状态
 } ClimbingState_e;
 
 typedef enum {
@@ -197,14 +201,14 @@ private:
     float wheel_target_angle_r_;
     uint8_t is_lift_pid_mode_;
     ClimbingState_e prev_climb_state_;
-    uint8_t rear_lift_delayed_flag_;
 
     uint8_t auto_running_;
     uint32_t auto_state_enter_tick_;
     uint8_t descend_mode_;
     uint8_t chassis_external_control_;
     uint8_t init_pose_active_;
-    uint8_t init_pose_planned_;
+    uint8_t init_pose_planned_; 
+    uint8_t rear_lift_delayed_flag_;
     ClimbUpMode_e up_mode_;
 
     void HandleStateTransition(uint32_t current_time, uint8_t state_changed);
@@ -240,7 +244,6 @@ public:
     void AutoTask1ms(void);
     void CAN_RxCallback(uint32_t std_id, uint8_t *data);
 
-    void NextStep(void);
     void AutoStart(void);
     void AutoStart20cm(void);
     void AutoStart40cm(void);
@@ -250,8 +253,9 @@ public:
     void DescendAutoStart(void);
     void DescendAutoStart20cm(void);
     void InitPoseStart(void);
+    void WeaponHeadClampStart(void); // 触发: 去夹武器头
+    void WeaponRodDockStart(void);   // 触发: 去对接武器杆
 
-    void ManualNext(void);
     void DescendManualNext(void);
     void EmergencyStop(void);
 };
