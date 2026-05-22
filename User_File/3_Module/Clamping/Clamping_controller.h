@@ -18,8 +18,8 @@
 #define CLAMPING_PID_OMEGA_KI           (500.0f)
 #define CLAMPING_PID_ANGLE_KP           (15.0f)
 #define CLAMPING_PID_ANGLE_KI           (0.0f)
-#define CLAMPING_PID_OMEGA_OUT_MAX      (5000.0f)
-#define CLAMPING_PID_OMEGA_I_OUT_MAX    (7000.0f)
+#define CLAMPING_PID_OMEGA_OUT_MAX      (4000.0f)
+#define CLAMPING_PID_OMEGA_I_OUT_MAX    (6000.0f)
 #define CLAMPING_PID_ANGLE_OUT_MAX      (10.0f)
 #define CLAMPING_PID_ANGLE_I_OUT_MAX    (15.0f)
 

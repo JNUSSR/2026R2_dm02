@@ -47,22 +47,23 @@ void Clamping_Auto_Start(void)
 {
     // 停止底盘
     Chassis_Set_Target(0.0f,0.0f,0.0f);
+    osDelay(500);
     // 确保夹爪移动到水平位置
     Clamping_Auto_Adjust();
-    osDelay(1000);
-    // 前进一段固定距离
-    Chassis_Set_Target(0.1f,0.0f,0.0f);
-    osDelay(1400);
+    osDelay(500);
+    // 前进一段固定距离（0.2m/s*1.5s=30cm）
+    Chassis_Set_Target(0.2f,0.0f,0.0f);
+    osDelay(1500);
     Chassis_Set_Target(0.0f,0.0f,0.0f);
     osDelay(1000);
     // 执行夹取动作
     clampingCtrl.OpenSolenoid();
     osDelay(1000);
-    // 后退一段固定距离
-    Chassis_Set_Target(-0.1f,0.0f,0.0f);
-    osDelay(1400);
+    // 后退一段固定距离（-0.2m/s*1.5s=-30cm）
+    Chassis_Set_Target(-0.2f,0.0f,0.0f);
+    osDelay(1500);
     Chassis_Set_Target(0.0f,0.0f,0.0f);
-    osDelay(1000);
+    osDelay(500);
     // 移动到垂直（对接）位置
     Clamping_Get_Controller().MoveToDockAngle();
 }
