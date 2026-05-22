@@ -74,10 +74,10 @@ void UartTask() {
                                 Climbing_Descend_Auto_Start_20cm();
                                 break;
                             case CLIMBING_CMD_WEAPON_HEAD_CLAMP_START:
-
+                                Climbing_WeaponHeadClampStart();
                                 break;
                             case CLIMBING_CMD_WEAPON_ROD_DOCK_START:
-
+                                Climbing_WeaponRodDockStart();
                                 break;
                         }
                     } else if (msg.msgid == MAVLINK_MSG_ID_CLAMPING_CMD) {
