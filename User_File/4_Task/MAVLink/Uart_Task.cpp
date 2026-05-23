@@ -34,7 +34,7 @@ void UartTask() {
 
             for (uint16_t i = 0; i < rx_len; i++) {
                 // mavlink_parse_char 返回 1 表示成功解析出一帧完整的消息
-                if (mavlink_parse_char(chan, UART7_Manage_Object.Rx_Buffer_Active[i], &msg, &status)) {
+                if (mavlink_parse_char(chan, UART7_Manage_Object.Rx_Buffer_Ready[i], &msg, &status)) {
                     if (msg.msgid == MAVLINK_MSG_ID_ARM_CONTROL) {
                         mavlink_arm_control_t arm_control;
                         mavlink_msg_arm_control_decode(&msg, &arm_control);
@@ -43,8 +43,14 @@ void UartTask() {
                             case ARM_ACTION_IDLE:
                                 idle_flag = true;
                                 break;
-                            case ARM_DRAW_KFS:
+                            case ARM_DRAW_KFS_20cm:
                                 drawkfs_flag = true;
+                                break;
+                            case ARM_DRAW_KFS_40cm:
+
+                                break;
+                            case ARM_DRAW_KFS_BELOW_20cm:
+
                                 break;
                         }
                     } else if (msg.msgid == MAVLINK_MSG_ID_CHASSIS_VELOCITY_CMD) {
