@@ -12,16 +12,17 @@
 #define CLAMPING_TARGET_ANGLE_DOCK_RAD  (-PI * 0.95f)
 #define CLAMPING_TARGET_ANGLE_RESET_RAD (0.0f)
 #define CLAMPING_PLAN_DT_S              (0.001f)
-#define CLAMPING_MOVE_DURATION_S        (0.3f)
+#define CLAMPING_MOVE_DURATION_S        (0.5f)
 
 #define CLAMPING_PID_OMEGA_KP           (2200.0f)
 #define CLAMPING_PID_OMEGA_KI           (500.0f)
 #define CLAMPING_PID_ANGLE_KP           (15.0f)
 #define CLAMPING_PID_ANGLE_KI           (0.0f)
-#define CLAMPING_PID_OMEGA_OUT_MAX      (4000.0f)
-#define CLAMPING_PID_OMEGA_I_OUT_MAX    (6000.0f)
-#define CLAMPING_PID_ANGLE_OUT_MAX      (10.0f)
-#define CLAMPING_PID_ANGLE_I_OUT_MAX    (15.0f)
+#define CLAMPING_PID_OMEGA_I_OUT_MAX    (4500.0f)
+#define CLAMPING_PID_OMEGA_OUT_MAX      (7000.0f)
+#define CLAMPING_PID_ANGLE_I_OUT_MAX    (10.0f)
+#define CLAMPING_PID_ANGLE_OUT_MAX      (15.0f)
+
 
 #define CLAMPING_LESO_ANGLE_FREQ        (8.0f)
 #define CLAMPING_LESO_ANGLE_GAIN        (0.04f)

@@ -19,15 +19,15 @@ void ClampingController::Init(FDCAN_HandleTypeDef *hcan)
         CLAMPING_PID_OMEGA_KI,
         0.0f,
         0.0f,
-        CLAMPING_PID_OMEGA_OUT_MAX,
-        CLAMPING_PID_OMEGA_I_OUT_MAX);
+        CLAMPING_PID_OMEGA_I_OUT_MAX,
+        CLAMPING_PID_OMEGA_OUT_MAX);
     motor_clamp_2006_.PID_Angle.Init(
         CLAMPING_PID_ANGLE_KP,
         CLAMPING_PID_ANGLE_KI,
         0.0f,
         0.0f,
-        CLAMPING_PID_ANGLE_OUT_MAX,
-        CLAMPING_PID_ANGLE_I_OUT_MAX);
+        CLAMPING_PID_ANGLE_I_OUT_MAX,
+        CLAMPING_PID_ANGLE_OUT_MAX);
     motor_clamp_2006_.Set_Position_ADRC(
         CLAMPING_LESO_ANGLE_FREQ,
         0.001f,
