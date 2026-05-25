@@ -8,16 +8,18 @@
 extern "C" {
 #endif
 
+// -----------------------------------------
+// OS 任务与 CAN 接收接口
+// -----------------------------------------
 void ClimbingTask(void);
-// CAN 接收分发到 climbing 控制器
 void Climbing_CAN_Rx_Dispatch(FDCAN_RxHeaderTypeDef &Header, uint8_t *Buffer);
 
-// 兼容旧接口: 初始化 + 1ms 主控制
 void Climbing_Task_Init(void);
 void Climbing_Task_Entry(void);
-void Climbing_Next_Step(void);
 
-// 自动流程接口
+// -----------------------------------------
+// 自动流程对外调用接口
+// -----------------------------------------
 void Climbing_Auto_Start(void);
 void Climbing_Auto_Start_20cm(void);
 void Climbing_Auto_Start_40cm(void);
@@ -27,26 +29,24 @@ void Climbing_Auto_Start_From_Touch_40cm(void);
 void Climbing_Descend_Auto_Start(void);
 void Climbing_Descend_Auto_Start_20cm(void);
 void Climbing_Init_Pose_Start(void);
-void Climbing_Auto_Task_1ms(void);
-uint8_t Climbing_Is_Auto_Running(void);
+
 void Climbing_WeaponRodDockStart(void);
 void Climbing_WeaponHeadClampStart(void);
 
-// 手动调试接口
-void Climbing_Manual_Next(void);
+// -----------------------------------------
+// 系统状态与控制接口
+// -----------------------------------------
+void Climbing_Auto_Task_1ms(void);
+uint8_t Climbing_Is_Auto_Running(void);
 void Climbing_Descend_Manual_Next(void);
-#ifdef __cplusplus
-#endif
 void Climbing_Emergency_Stop(void);
+
 #ifdef __cplusplus
 ClimbingState_e Climbing_Get_State(void);
-#endif
+} // extern "C"
 
-#ifdef __cplusplus
-}
-
+// 允许 C++ 文件获取控制器实例引用
 ClimbingController &Climbing_Get_Controller(void);
-
 #endif
 
 #endif // TEST_FEEDBACK_CLIMBINGTASK2_H
