@@ -16,7 +16,8 @@ uint16_t rx_len = 0;
 
 extern bool drawkfs_flag;
 extern bool idle_flag;
-
+extern bool drawkfs_40cm_flag;
+extern bool drawkfs_below20cm_flag;
 
 extern osSemaphoreId_t uartSemaphoreHandle;
 
@@ -47,10 +48,10 @@ void UartTask() {
                                 drawkfs_flag = true;
                                 break;
                             case ARM_DRAW_KFS_40cm:
-
+                                drawkfs_40cm_flag = true;
                                 break;
                             case ARM_DRAW_KFS_BELOW_20cm:
-
+                                drawkfs_below20cm_flag = true;
                                 break;
                         }
                     } else if (msg.msgid == MAVLINK_MSG_ID_CHASSIS_VELOCITY_CMD) {

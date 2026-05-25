@@ -30,12 +30,44 @@ const ArmStep DrawKFS[] = {
     {0.10f, 5.0f, 0.15f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤3
     {0.10f, 0.0f, 0.0f, 5.0f, M_PI / 2, 0.0f, nullptr}, // 步骤4
     {
+        0.0f, 3.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        []() { HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_RESET); }
+    }
+};
+
+const ArmStep DrawKFS_40cm[] = {
+    //  Z目标, Z耗时 |  X目标, X耗时 |  R目标, R耗时
+    {
+        0.25f, 5.0f, 0.0f, 0.0f, M_PI / 2, 5.0f,
+        []() { HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET); }
+    }, // 步骤1
+    {0.25f, 0.0f, 0.15f, 5.0f, M_PI / 2, 0.0f, nullptr}, // 步骤2
+    {0.30f, 5.0f, 0.15f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤3
+    {0.30f, 0.0f, 0.0f, 5.0f, M_PI / 2, 0.0f, nullptr}, // 步骤4
+    {
+        0.0f, 5.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        []() { HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_RESET); }
+    }
+};
+
+const ArmStep DrawKFS_Below20cm[] = {
+    //  Z目标, Z耗时 |  X目标, X耗时 |  R目标, R耗时
+    {
+        0.0f, 2.0f, 0.0f, 0.0f, M_PI / 2, 5.0f,
+        []() { HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET); }
+    }, // 步骤1
+    {0.0f, 0.0f, 0.15f, 5.0f, M_PI / 2, 0.0f, nullptr}, // 步骤2
+    {0.0f, 5.0f, 0.15f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤3
+    {0.0f, 0.0f, 0.0f, 5.0f, M_PI / 2, 0.0f, nullptr}, // 步骤4
+    {
         0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
         []() { HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_RESET); }
     }
 };
 
 bool drawkfs_flag = false;
+bool drawkfs_40cm_flag = false;
+bool drawkfs_below20cm_flag = false;
 bool idle_flag = false;
 
 void DrawKFS_Task() {
@@ -69,6 +101,14 @@ void DrawKFS_Task() {
         if (idle_flag && !player.IsPlaying()) {
             player.Play(IDLE,ARRAY_LEN(IDLE));
             idle_flag = false;
+        }
+        else if (drawkfs_40cm_flag && !player.IsPlaying()) {
+            player.Play(DrawKFS_40cm, ARRAY_LEN(DrawKFS_40cm));
+            drawkfs_40cm_flag = false;
+        }
+        else if (drawkfs_below20cm_flag && !player.IsPlaying()) {
+            player.Play(DrawKFS_Below20cm, ARRAY_LEN(DrawKFS_Below20cm));
+            drawkfs_below20cm_flag = false;
         }
         else if (drawkfs_flag && !player.IsPlaying()) {
             player.Play(DrawKFS, ARRAY_LEN(DrawKFS));
