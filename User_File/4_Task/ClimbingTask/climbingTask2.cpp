@@ -60,6 +60,7 @@ void Climbing_Auto_Start_From_Touch_40cm(void)  { climbingCtrl.AutoStartFromTouc
 
 void Climbing_Descend_Auto_Start(void)          { climbingCtrl.DescendAutoStart20cm(); }
 void Climbing_Descend_Auto_Start_20cm(void)     { climbingCtrl.DescendAutoStart20cm(); }
+void Climbing_Descend_Auto_Start_40cm(void)     { climbingCtrl.DescendAutoStart40cm(); }
 
 void Climbing_Init_Pose_Start(void)             { climbingCtrl.InitPoseStart(); }
 void Climbing_WeaponRodDockStart(void)          { climbingCtrl.WeaponRodDockStart(); }

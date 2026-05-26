@@ -44,8 +44,8 @@
 #define POS_FRONT_LIFT_20cm       movingmm_front(20.0f) //20
 #define POS_REAR_LIFT_20cm        movingmm_rear(220.0f) //220
 
-#define POS_FRONT_FINAL_20cm movingmm_front(-220.0f)
-#define POS_REAR_FINAL_20cm  movingmm_rear(-80.0f)
+#define POS_FRONT_FINAL_20cm      movingmm_front(-220.0f)
+#define POS_REAR_FINAL_20cm       movingmm_rear(-80.0f)
 
 //上40cm台阶
 #define POS_FRONT_RETRACT_40cm    movingmm_front(-420.0f)
@@ -73,6 +73,20 @@
 // 前脚保持下层地面接触，后脚保持上层台阶对应高度
 #define DESCEND_FRONT_RAISE_TARGET       movingmm_front(0.0f)
 #define DESCEND_REAR_RAISE_TARGET        movingmm_rear(-210.0f)
+
+//下40cm台阶
+// 下台阶：状态3 触地目标
+#define DESCEND_FRONT_TOUCH_TARGET_40cm       movingmm_front(0.0f)
+#define DESCEND_REAR_TOUCH_TARGET_40cm        movingmm_rear(400.0f)
+
+// 下台阶：状态4 全局下降目标
+#define DESCEND_FRONT_GLOBAL_DOWN_TARGET_40cm movingmm_front(40.0f)
+#define DESCEND_REAR_GLOBAL_DOWN_TARGET_40cm  movingmm_rear(440.0f)
+
+// 下台阶：状态6 抬起过渡目标
+// 前脚保持下层地面接触，后脚保持上层台阶对应高度
+#define DESCEND_FRONT_RAISE_TARGET_40cm       movingmm_front(-400.0f)
+#define DESCEND_REAR_RAISE_TARGET_40cm        movingmm_rear(0.0f)
 
 // ==========================================
 // 武器机构对接位置与时间参数
@@ -258,6 +272,7 @@ public:
     void AutoStartFromTouch40cm(void);
     void DescendAutoStart(void);
     void DescendAutoStart20cm(void);
+    void DescendAutoStart40cm(void);
     void InitPoseStart(void);
     void WeaponHeadClampStart(void); 
     void WeaponRodDockStart(void);   

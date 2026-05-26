@@ -4,7 +4,7 @@
 
 // 剧本 1: 上 20cm 台阶完整流程
 static const ActionFrame_t Seq_Up20cm[] = {
-    // state_id, base_ref, cap_desc, front_offset, rear_offset, wheel_rad, duration, delay, PID, wheel_mode, desc_slope
+    // state_id, front_offset, rear_offset, wheel_rad, duration, delay, PID, wheel_mode, desc_slope
     { STEP_SETUP,               POS_FRONT_RETRACT_20cm, 
           POS_REAR_RETRACT_20cm, 0.0f, 
           TIME_SETUP,            0,   0,
@@ -34,6 +34,22 @@ static const ActionFrame_t Seq_Descend[] = {
     { STEP_DESCEND_DRIVE, DESCEND_FRONT_GLOBAL_DOWN_TARGET, DESCEND_REAR_GLOBAL_DOWN_TARGET, WHEEL_TRAVEL_DESCEND_RAD, DESCEND_DRIVE_TIME_MS, 0, 1, WHEEL_MODE_ANGLE, 1 },
     { STEP_DESCEND_RAISE, DESCEND_FRONT_RAISE_TARGET, DESCEND_REAR_RAISE_TARGET, 0.0f, TIME_DESC_RAISE, 0, 1, WHEEL_MODE_ANGLE, 1 }
 };
+
+// 剧本 4: 下40cm台阶流程，由于机械结构，需要后腿在前面先下
+static const ActionFrame_t Seq_Descend40cm[] = {
+    // state_id, front_offset, rear_offset, wheel_rad, duration, delay, PID, wheel_mode, desc_slope
+    { STEP_DESCEND_SETUP, POS_FRONT_Init, POS_REAR_Init, 
+          0.0f, TIME_DESC_SETUP, 0, 0, WHEEL_MODE_ANGLE, 1 },
+    { STEP_DESCEND_TOUCH, DESCEND_FRONT_TOUCH_TARGET_40cm, DESCEND_REAR_TOUCH_TARGET_40cm, 
+          0.0f, TIME_DESC_TOUCH, 0, 1, WHEEL_MODE_ANGLE, 1 },
+    { STEP_DESCEND_GLOBAL_DOWN, DESCEND_FRONT_GLOBAL_DOWN_TARGET_40cm, DESCEND_REAR_GLOBAL_DOWN_TARGET_40cm, 
+          0.0f, TIME_DESC_GLOBAL_DOWN, 0, 1, WHEEL_MODE_ANGLE, 1 },
+    { STEP_DESCEND_DRIVE, DESCEND_FRONT_GLOBAL_DOWN_TARGET_40cm, DESCEND_REAR_GLOBAL_DOWN_TARGET_40cm, 
+          WHEEL_TRAVEL_DESCEND_RAD, DESCEND_DRIVE_TIME_MS, 0, 1, WHEEL_MODE_ANGLE, 1 },
+    { STEP_DESCEND_RAISE, DESCEND_FRONT_RAISE_TARGET_40cm, DESCEND_REAR_RAISE_TARGET_40cm, 
+          0.0f, TIME_DESC_RAISE, 0, 1, WHEEL_MODE_ANGLE, 1 }
+};
+
 
 // 单步独立剧本
 static const ActionFrame_t Seq_InitPose[] = {
@@ -345,12 +361,18 @@ void ClimbingController::Prepare40cm(void) {
     auto_running_ = 0; // 加载第一帧但不自动推进时间
 }
 
+//上20cm接口
 void ClimbingController::AutoStartFromTouch20cm(void) { StartSequence(Seq_Up20cm, 6, 1); }
 void ClimbingController::AutoStartFromTouch40cm(void) { StartSequence(Seq_Up40cm, 6, 1); }
 
+//下20cm接口
 void ClimbingController::DescendAutoStart(void) { StartSequence(Seq_Descend, 5, 0); }
 void ClimbingController::DescendAutoStart20cm(void) { StartSequence(Seq_Descend, 5, 0); }
 
+//下40cm接口
+void ClimbingController::DescendAutoStart40cm(void) { StartSequence(Seq_Descend40cm, 5, 0); }
+
+//武器头和武器杆
 void ClimbingController::WeaponHeadClampStart(void) { StartSequence(Seq_WeaponHeadClamp, 1, 0); }
 void ClimbingController::WeaponRodDockStart(void) { StartSequence(Seq_WeaponRodDock, 1, 0); }
 

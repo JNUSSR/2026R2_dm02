@@ -28,6 +28,7 @@ void Climbing_Auto_Start_From_Touch_20cm(void);
 void Climbing_Auto_Start_From_Touch_40cm(void);
 void Climbing_Descend_Auto_Start(void);
 void Climbing_Descend_Auto_Start_20cm(void);
+void Climbing_Descend_Auto_Start_40cm(void);
 void Climbing_Init_Pose_Start(void);
 
 void Climbing_WeaponRodDockStart(void);
