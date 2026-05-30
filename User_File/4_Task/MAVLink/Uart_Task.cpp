@@ -18,6 +18,7 @@ extern bool drawkfs_flag;
 extern bool idle_flag;
 extern bool drawkfs_40cm_flag;
 extern bool drawkfs_below20cm_flag;
+extern bool putkfs_ordertwo_flag;
 
 extern osSemaphoreId_t uartSemaphoreHandle;
 
@@ -53,6 +54,9 @@ void UartTask() {
                             case ARM_DRAW_KFS_BELOW_20cm:
                                 drawkfs_below20cm_flag = true;
                                 break;
+                            case ARM_PUT_KFS_ORDER_TWO:
+                                putkfs_ordertwo_flag = true;
+                                break;
                         }
                     } else if (msg.msgid == MAVLINK_MSG_ID_CHASSIS_VELOCITY_CMD) {
                         mavlink_chassis_velocity_cmd_t chassis_velocity_cmd;
@@ -85,6 +89,9 @@ void UartTask() {
                                 break;
                             case CLIMBING_CMD_WEAPON_ROD_DOCK_START:
                                 Climbing_WeaponRodDockStart();
+                                break;
+                            case CLIMBING_CMD_EXECUTE_DOWN_40CM:
+                                Climbing_Descend_Auto_Start_40cm();
                                 break;
                         }
                     } else if (msg.msgid == MAVLINK_MSG_ID_CLAMPING_CMD) {

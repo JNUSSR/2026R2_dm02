@@ -111,7 +111,7 @@
 //#define WHEEL_ANGLE_DONE_TOL_RAD      (0.25f) //轮子角度到位容忍度 即误差到某个值时认为轮子已经到位
 
 // 轮子角度斜坡
-#define WHEEL_SLOPE_RPM_UP            (100.0f) //up
+#define WHEEL_SLOPE_RPM_UP            (90.0f) //up
 #define WHEEL_SLOPE_RPM_DESCEND       (80.0f) //descend
 #define WHEEL_SLOPE_STEP_UP           (RC_RPM_TO_RADPS(WHEEL_SLOPE_RPM_UP) / TASK_FREQ_HZ)
 #define WHEEL_SLOPE_STEP_DESCEND      (RC_RPM_TO_RADPS(WHEEL_SLOPE_RPM_DESCEND) / TASK_FREQ_HZ)
@@ -142,7 +142,7 @@
 #define TIME_SETUP           1500  // 给2秒让它缩腿
 #define TIME_CHASSIS_APPROACH 800  // 底盘向前微调贴紧台阶的时间 (0.8s)
 #define TIME_TOUCH           500  // 触地时间
-#define TIME_LIFT            1000  // 顶升时间
+#define TIME_LIFT            1500  // 顶升时间
 #define TIME_LIFT_REAR_DELAY 100   // 顶升阶段后脚延时启动
 #define TIME_DRIVE           1800  // 平移时间
 #define TIME_RETRACT         1000  // 收腿时间

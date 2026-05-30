@@ -10,7 +10,7 @@
     #error Wrong include order: MAVLINK_R2_V3.H MUST NOT BE DIRECTLY USED. Include mavlink.h from the same directory instead or set ALL AND EVERY defines from MAVLINK.H manually accordingly, including the #define MAVLINK_H call.
 #endif
 
-#define MAVLINK_R2_V3_XML_HASH 4395986459803786170
+#define MAVLINK_R2_V3_XML_HASH -5491612385514619962
 
 #ifdef __cplusplus
 extern "C" {
@@ -42,7 +42,8 @@ typedef enum ARM_ACTION_CMD
    ARM_DRAW_KFS_20cm=1, /* Draw KFS 20cm | */
    ARM_DRAW_KFS_40cm=2, /* Draw KFS 40cm | */
    ARM_DRAW_KFS_BELOW_20cm=3, /* Draw KFS 20cm from below | */
-   ARM_ACTION_CMD_ENUM_END=4, /*  | */
+   ARM_PUT_KFS_ORDER_TWO=4, /* Put KFS into order two | */
+   ARM_ACTION_CMD_ENUM_END=5, /*  | */
 } ARM_ACTION_CMD;
 #endif
 
@@ -58,7 +59,8 @@ typedef enum CLIMBING_CMD_TYPE
    CLIMBING_CMD_EXECUTE_DOWN_20CM=4, /* Execute 20cm descending after the upper computer has moved the chassis to the edge. Maps to Climbing_Descend_Auto_Start_20cm(). | */
    CLIMBING_CMD_WEAPON_HEAD_CLAMP_START=5, /* Start weapon head clamping. Maps to Climbing_WeaponHeadClampStart(). | */
    CLIMBING_CMD_WEAPON_ROD_DOCK_START=6, /* Start weapon rod docking. Maps to Climbing_WeaponRodDockStart(). | */
-   CLIMBING_CMD_TYPE_ENUM_END=7, /*  | */
+   CLIMBING_CMD_EXECUTE_DOWN_40CM=7, /* Execute 40cm descending after the upper computer has moved the chassis to the edge. Maps to Climbing_Descend_Auto_Start_40cm(). | */
+   CLIMBING_CMD_TYPE_ENUM_END=8, /*  | */
 } CLIMBING_CMD_TYPE;
 #endif
 

@@ -8,6 +8,8 @@
 #include "drv_can.h"
 #include "2_Device/Motor/Motor_DJI/dvc_motor_dji.h"
 #include "main.h"
+#include "stm32h723xx.h"
+#include "stm32h7xx_hal_gpio.h"
 #include "uart_printf.h"
 
 Class_Motor_DJI_C620 Motor_Z;
@@ -68,10 +70,21 @@ const ArmStep DrawKFS_Below20cm[] = {
     }
 };
 
+const ArmStep PutKFS_OrderTwo[] = {
+    {0.20f,2.5f, 0.0f, 0.0f, -M_PI / 2, 2.0f,nullptr},// 步骤1
+    {1.1f,7.0f,0.0f,0.0f, M_PI / 2, 5.0f,
+    []{HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET);}},//步骤2
+    {1.1f,0.0f, 0.35f,5.0f, M_PI / 2, 0.0f,nullptr},//步骤3
+    {1.1f,2.0f,0.35f,0.f, M_PI / 2, 0.0f,
+    []{HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_RESET);}},//步骤4
+    {0.0f, 7.0f, 0.0f, 5.0f, 0.0f, 2.0f,}
+};
+
 bool drawkfs_flag = false;
 bool drawkfs_40cm_flag = false;
 bool drawkfs_below20cm_flag = false;
 bool idle_flag = false;
+bool putkfs_ordertwo_flag = false;
 
 void DrawKFS_Task() {
     Motor_Z.PID_Omega.Init(1500.0f, 600.0f, 0.0f, 0.0f, 3000.0f, 8000.0f);
@@ -116,6 +129,10 @@ void DrawKFS_Task() {
         else if (drawkfs_flag && !player.IsPlaying()) {
             player.Play(DrawKFS, ARRAY_LEN(DrawKFS));
             drawkfs_flag = false;
+        }
+        else if (putkfs_ordertwo_flag && !player.IsPlaying()) {
+            player.Play(PutKFS_OrderTwo, ARRAY_LEN(PutKFS_OrderTwo));
+            putkfs_ordertwo_flag = false;
         }
 
         player.Update();
