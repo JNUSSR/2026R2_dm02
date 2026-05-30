@@ -29,8 +29,9 @@ const ArmStep DrawKFS[] = {
     {0.05f, 0.0f, 0.15f, 5.0f, M_PI / 2, 0.0f, nullptr}, // 步骤2
     {0.10f, 5.0f, 0.15f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤3
     {0.10f, 0.0f, 0.0f, 5.0f, M_PI / 2, 0.0f, nullptr}, // 步骤4
+    {0.10f, 0.0f, 0.0f, 0.0f, M_PI *3 / 2, 0.1f, nullptr}, // 步骤5
     {
-        0.0f, 3.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 3.0f, 0.0f, 0.0f, 0.0f, 1.0f,
         []() { HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_RESET); }
     }
 };
@@ -44,8 +45,9 @@ const ArmStep DrawKFS_40cm[] = {
     {0.25f, 0.0f, 0.15f, 5.0f, M_PI / 2, 0.0f, nullptr}, // 步骤2
     {0.30f, 5.0f, 0.15f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤3
     {0.30f, 0.0f, 0.0f, 5.0f, M_PI / 2, 0.0f, nullptr}, // 步骤4
+    {0.10f, 5.0f, 0.0f, 0.0f, M_PI *3 / 2, 0.1f, nullptr}, // 步骤5
     {
-        0.0f, 5.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 3.0f, 0.0f, 0.0f, 0.0f, 1.0f,
         []() { HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_RESET); }
     }
 };
@@ -57,10 +59,10 @@ const ArmStep DrawKFS_Below20cm[] = {
         []() { HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET); }
     }, // 步骤1
     {0.0f, 0.0f, 0.15f, 5.0f, M_PI / 2, 0.0f, nullptr}, // 步骤2
-    {0.0f, 5.0f, 0.15f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤3
-    {0.0f, 0.0f, 0.0f, 5.0f, M_PI / 2, 0.0f, nullptr}, // 步骤4
+    {0.10f, 3.0f, 0.15f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤3
+    {0.10f, 0.0f, 0.0f, 5.0f, M_PI *3 / 2, 0.1f, nullptr}, // 步骤4
     {
-        0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 3.0f, 0.0f, 0.0f, 0.0f, 1.0f,
         []() { HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_RESET); }
     }
 };
