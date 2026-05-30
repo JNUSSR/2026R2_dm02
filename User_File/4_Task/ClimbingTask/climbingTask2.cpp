@@ -1,6 +1,8 @@
 #include "climbingTask2.h"
 #include "cmsis_os2.h"
 #include "main.h"
+#include "Laser_Task.h"
+#include "drv_uart.h"  
 
 // 实例化全局唯一的 C++ 控制器对象
 ClimbingController climbingCtrl;
@@ -15,6 +17,11 @@ void Climbing_CAN_Rx_Dispatch(FDCAN_RxHeaderTypeDef &Header, uint8_t *Buffer)
     climbingCtrl.CAN_RxCallback(Header.Identifier, Buffer);
 }
 
+uint8_t Climbing_Is_Finding_Edge(void)
+{
+    return climbingCtrl.IsFindingEdge();
+}
+
 // -----------------------------------------
 // FreeRTOS 任务主循环
 // -----------------------------------------
@@ -23,14 +30,42 @@ void ClimbingTask(void)
     // 任务入口里完成一次初始化
     climbingCtrl.Init(&hfdcan1);
 
+    // 初始化激光串口 
+    LaserTask_Init();
+    
+    //既然平时不需要测距，初始化完立刻强行掐断硬件接收
+    HAL_UART_AbortReceive(&huart10);
+
     osDelay(2000); // 等待系统硬件与总线稳定
     Climbing_Init_Pose_Start(); // 默认进入初始站立姿态
     
+    uint8_t last_laser_state = 0;  // 记录激光上一次的开关状态
+
     for (;;)
     {
         // 1ms 周期: 先推进自动状态, 再执行主控制计算
         climbingCtrl.AutoTask1ms();
         climbingCtrl.TaskEntry1ms();
+        // 动态接管激光串口 (双缓冲 DMA 空闲中断) 的生命周期
+        uint8_t current_laser_state = Climbing_Is_Finding_Edge();
+        
+        // 只有在寻崖状态发生切换的那 1 毫秒，才去操作硬件寄存器
+        if (current_laser_state != last_laser_state)
+        {
+            if (current_laser_state == 1) 
+            {
+                // 【刚刚切入寻崖模式】：正式开启接收！
+                // 并重启 DMA 接收
+                UART_Reinit(&huart10); 
+            } 
+            else 
+            {
+                // 暴力掐断 DMA 传输和空闲中断，节约算力
+                HAL_UART_AbortReceive(&huart10); 
+            }
+            
+            last_laser_state = current_laser_state; // 更新状态记录
+        }
         osDelay(1);
     }
 }

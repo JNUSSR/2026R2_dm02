@@ -21,13 +21,14 @@ static const ActionFrame_t Seq_Up40cm[] = {
     { STEP_SETUP, POS_FRONT_RETRACT_40cm, POS_REAR_RETRACT_40cm, 0.0f, TIME_SETUP, 0, 0, WHEEL_MODE_ANGLE, 0 },
     { STEP_CHASSIS_APPROACH, POS_FRONT_RETRACT_40cm, POS_REAR_RETRACT_40cm, 0.0f, TIME_CHASSIS_APPROACH, 0, 0, WHEEL_MODE_CHASSIS_APPROACH, 0 },
     { STEP_TOUCH_DOWN, POS_FRONT_TOUCH_40cm, POS_REAR_TOUCH_40cm, 0.0f, TIME_TOUCH, 0, 0, WHEEL_MODE_ANGLE, 0 },
-    { STEP_GLOBAL_LIFT, POS_FRONT_LIFT_40cm, POS_REAR_LIFT_40cm, 0.0f, TIME_LIFT, TIME_LIFT_REAR_DELAY, 1, WHEEL_MODE_CREEP, 0 },
+    { STEP_GLOBAL_LIFT, POS_FRONT_LIFT_40cm, POS_REAR_LIFT_40cm, 0.0f, 3000, TIME_LIFT_REAR_DELAY, 1, WHEEL_MODE_CREEP, 0 },
     { STEP_DRIVE_FWD, POS_FRONT_LIFT_40cm, POS_REAR_LIFT_40cm, WHEEL_TRAVEL_UP_RAD, TIME_DRIVE, 0, 1, WHEEL_MODE_ANGLE, 0 },
     { STEP_RETRACT, POS_FRONT_FINAL_40cm, POS_REAR_FINAL_40cm, 0.0f, TIME_RETRACT, 0, 0, WHEEL_MODE_ANGLE, 0 }
 };
 
 // 剧本 3: 下台阶流程 
 static const ActionFrame_t Seq_Descend[] = {
+    { STEP_DESCEND_FIND_EDGE, POS_FRONT_Init, POS_REAR_Init, 0.0f, TIME_FIND_EDGE_TIMEOUT, 0, 0, WHEEL_MODE_FIND_EDGE, 1 },
     { STEP_DESCEND_SETUP, POS_FRONT_Init, POS_REAR_Init, 0.0f, TIME_DESC_SETUP, 0, 0, WHEEL_MODE_ANGLE, 1 },
     { STEP_DESCEND_TOUCH, DESCEND_FRONT_TOUCH_TARGET, DESCEND_REAR_TOUCH_TARGET, 0.0f, TIME_DESC_TOUCH, 0, 1, WHEEL_MODE_ANGLE, 1 },
     { STEP_DESCEND_GLOBAL_DOWN, DESCEND_FRONT_GLOBAL_DOWN_TARGET, DESCEND_REAR_GLOBAL_DOWN_TARGET, 0.0f, TIME_DESC_GLOBAL_DOWN, 0, 1, WHEEL_MODE_ANGLE, 1 },
@@ -85,9 +86,10 @@ ClimbingController::ClimbingController()
       start_pos_front_(0.0f),               // 上台阶前腿起始角
       start_pos_rear_(0.0f),                // 上台阶后腿起始角
       wheel_target_angle_l_(0.0f),          // 左轮目标角
-      wheel_target_angle_r_(0.0f){}          // 右轮目标角
-
-     
+      wheel_target_angle_r_(0.0f),          // 右轮目标角
+      laser_distance_(0.0f),               
+      laser_debounce_cnt_(0) {}             
+    
 
 void ClimbingController::Init(FDCAN_HandleTypeDef *hcan)
 {
@@ -219,12 +221,41 @@ void ClimbingController::AutoTask1ms(void)
         Chassis_Set_Target(0.1f, 0.0f, 0.0f); 
     }
 
+    // 独立控制：下台阶寻崖感知与防抖拦截
+    if (frame.wheel_mode == WHEEL_MODE_FIND_EDGE) {
+        Chassis_Set_Target(0.1f, 0.0f, 0.0f); // 给底盘下发微小前移速度
+        
+        // 判定激光距离是否踩空
+        if (laser_distance_ > LASER_EDGE_THRESHOLD_MM) {
+            laser_debounce_cnt_++;
+            // 连续 N 毫秒达标，确认找到悬崖
+            if (laser_debounce_cnt_ >= LASER_DEBOUNCE_MAX) {
+                Chassis_Set_Target(0.0f, 0.0f, 0.0f); // [战术急刹车] 瞬间死区钉住！
+                laser_debounce_cnt_ = 0;              // 重置防抖
+                
+                current_step_++; // 强行跳过时间轴，直接切入 SETUP 帧
+                LoadNextFrame(); // 下发收腿剧本
+                return;          // 拦截本次循环，禁止执行下面的时间判断
+            }
+        } else {
+            // 中途如果有一毫秒读回了正常值（如10cm），说明是噪点，防抖计数器清零
+            laser_debounce_cnt_ = 0; 
+        }
+    }
+
     // 核心流转：如果时间走完，切换下一帧
     if ((now - state_tick_) >= frame.duration_ms)
     {
         // 离开帧前，清空特定状态命令
         if (frame.wheel_mode == WHEEL_MODE_CHASSIS_APPROACH) {
             Chassis_Set_Target(0.0f, 0.0f, 0.0f);
+        }
+
+        //如果寻崖模式跑满了 8 秒还没触发上面的跳帧，说明找不着台阶！
+        if (frame.wheel_mode == WHEEL_MODE_FIND_EDGE) {
+            Chassis_Set_Target(0.0f, 0.0f, 0.0f); // 安全刹车
+            auto_running_ = 0;                              // 强制停机，保护机器人不乱跑
+            return; 
         }
 
         current_step_++;
@@ -366,8 +397,8 @@ void ClimbingController::AutoStartFromTouch20cm(void) { StartSequence(Seq_Up20cm
 void ClimbingController::AutoStartFromTouch40cm(void) { StartSequence(Seq_Up40cm, 6, 1); }
 
 //下20cm接口
-void ClimbingController::DescendAutoStart(void) { StartSequence(Seq_Descend, 5, 0); }
-void ClimbingController::DescendAutoStart20cm(void) { StartSequence(Seq_Descend, 5, 0); }
+void ClimbingController::DescendAutoStart(void) { StartSequence(Seq_Descend, 6, 0); }
+void ClimbingController::DescendAutoStart20cm(void) { StartSequence(Seq_Descend, 6, 0); }
 
 //下40cm接口
 void ClimbingController::DescendAutoStart40cm(void) { StartSequence(Seq_Descend40cm, 5, 0); }
@@ -377,3 +408,11 @@ void ClimbingController::WeaponHeadClampStart(void) { StartSequence(Seq_WeaponHe
 void ClimbingController::WeaponRodDockStart(void) { StartSequence(Seq_WeaponRodDock, 1, 0); }
 
 void ClimbingController::InitPoseStart(void) { StartSequence(Seq_InitPose, 1, 0); }
+
+uint8_t ClimbingController::IsFindingEdge(void) const
+{
+    if (!auto_running_ || current_seq_ == nullptr) return 0;
+    
+    // 只要当前步的轮子模式是 FIND_EDGE，就返回 1
+    return (current_seq_[current_step_].wheel_mode == WHEEL_MODE_FIND_EDGE) ? 1 : 0;
+}

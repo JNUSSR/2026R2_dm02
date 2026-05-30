@@ -111,8 +111,8 @@
 //#define WHEEL_ANGLE_DONE_TOL_RAD      (0.25f) //轮子角度到位容忍度 即误差到某个值时认为轮子已经到位
 
 // 轮子角度斜坡
-#define WHEEL_SLOPE_RPM_UP            (85.0f) //up
-#define WHEEL_SLOPE_RPM_DESCEND       (70.0f) //descend
+#define WHEEL_SLOPE_RPM_UP            (100.0f) //up
+#define WHEEL_SLOPE_RPM_DESCEND       (80.0f) //descend
 #define WHEEL_SLOPE_STEP_UP           (RC_RPM_TO_RADPS(WHEEL_SLOPE_RPM_UP) / TASK_FREQ_HZ)
 #define WHEEL_SLOPE_STEP_DESCEND      (RC_RPM_TO_RADPS(WHEEL_SLOPE_RPM_DESCEND) / TASK_FREQ_HZ)
 
@@ -142,10 +142,10 @@
 #define TIME_SETUP           1500  // 给2秒让它缩腿
 #define TIME_CHASSIS_APPROACH 800  // 底盘向前微调贴紧台阶的时间 (0.8s)
 #define TIME_TOUCH           500  // 触地时间
-#define TIME_LIFT            1500  // 顶升时间
+#define TIME_LIFT            1000  // 顶升时间
 #define TIME_LIFT_REAR_DELAY 100   // 顶升阶段后脚延时启动
-#define TIME_DRIVE           2000  // 平移时间
-#define TIME_RETRACT         1500  // 收腿时间
+#define TIME_DRIVE           1800  // 平移时间
+#define TIME_RETRACT         1000  // 收腿时间
 
 // --- 下台阶时间参数 ---
 #define TIME_DESC_SETUP      1500
@@ -156,6 +156,11 @@
 
 //夹武器头对应时间参数
 #define TIME_WEAPON_ACTION       1500// 武器动作统一执行时间 (1.5秒平滑到位)
+
+// 激光测距寻崖参数
+#define LASER_EDGE_THRESHOLD_MM   620.0f  // 判定门限：激光返回大于 30cm (300mm) 视为踩空
+#define LASER_DEBOUNCE_MAX        50       // 防抖：连续 5ms 检测到大于门限才触发
+#define TIME_FIND_EDGE_TIMEOUT    8000    // 寻崖超时：最多往前开 8 秒，找不到就停机保护
 
 
 // ==========================================
@@ -172,6 +177,7 @@ typedef enum {
     STEP_RETRACT,             // 上台阶: 收腿复位
     STEP_DONE,                // 上台阶完成
 
+    STEP_DESCEND_FIND_EDGE,   // 下台阶: 寻崖模式
     STEP_DESCEND_SETUP,       // 下台阶: 收腿准备
     STEP_DESCEND_TOUCH,       // 下台阶: 触地
     STEP_DESCEND_GLOBAL_DOWN, // 下台阶: 全局下降
@@ -186,7 +192,8 @@ typedef enum {
 typedef enum {
     WHEEL_MODE_ANGLE = 0,        // 正常斜坡角度跟踪
     WHEEL_MODE_CREEP,            // OMEGA模式抗台阶阻力
-    WHEEL_MODE_CHASSIS_APPROACH  // 调用底盘命令前进
+    WHEEL_MODE_CHASSIS_APPROACH,  // 调用底盘命令前进
+    WHEEL_MODE_FIND_EDGE         // 寻崖底盘持续推进模式
 } WheelMode_e;
 
 // 【核心架构】动作帧配置结构体
@@ -222,6 +229,10 @@ private:
     float wheel_target_angle_l_;
     float wheel_target_angle_r_;
 
+    // --- 激光测距相关 ---
+    float laser_distance_;
+    uint8_t laser_debounce_cnt_;
+
     // --- 执行器与规划器 ---
     Class_Motor_DJI_C620 motor_lift_front_;
     Class_Motor_DJI_C620 motor_lift_rear_;
@@ -244,6 +255,7 @@ private:
 public:
     ClimbingController();
 
+    void UpdateLaserDistance(float distance) { laser_distance_ = distance; }
     float GetFrontTargetAngle(void) { return motor_lift_front_.Get_Target_Angle(); }
     float GetFrontNowAngle(void) { return motor_lift_front_.Get_Now_Angle(); }
     float GetFrontOut(void) { return motor_lift_front_.Get_Out(); }
@@ -257,6 +269,8 @@ public:
 
     ClimbingState_e GetState(void) const { return climb_state_; }
     uint8_t IsAutoRunning(void) const { return auto_running_; }
+
+    uint8_t IsFindingEdge(void) const;
 
     void Init(FDCAN_HandleTypeDef *hcan);
     void TaskEntry1ms(void);
