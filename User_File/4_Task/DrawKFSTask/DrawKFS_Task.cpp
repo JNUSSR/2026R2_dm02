@@ -23,14 +23,14 @@ const ArmStep IDLE[] = {
 const ArmStep DrawKFS[] = {
     //  Z目标, Z耗时 |  X目标, X耗时 |  R目标, R耗时
     {
-        0.10f, 2.5f, 0.0f, 0.0f, 0.0, 0.0f,
+        0.15f, 2.5f, 0.0f, 0.0f, 0.0, 0.0f,
         []() { HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET); }
     }, // 步骤1
-    {0.10f, 0.0f, 0.40f, 5.0f, M_PI / 2, 5.0f, nullptr}, // 步骤2
-    {0.15f, 2.0f, 0.40f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤3
-    {0.15f, 0.0f, 0.0f, 5.0f, M_PI / 2, 0.0f, nullptr}, // 步骤4
-    {0.15f, 0.0f, 0.0f, 0.0f, M_PI * 1.5f, 0.2f, nullptr}, // 步骤5
-    {0.15f, 2.0f, 0.0f, 0.0f, M_PI *1.5f, 0.0f, nullptr}, // 步骤6
+    {0.15f, 0.0f, 0.43f, 5.0f, M_PI / 2, 5.0f, nullptr}, // 步骤2
+    {0.20f, 2.0f, 0.43f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤3
+    {0.20f, 0.0f, 0.0f, 5.0f, M_PI / 2, 0.0f, nullptr}, // 步骤4
+    {0.20f, 0.0f, 0.0f, 0.0f, M_PI * 1.5f, 0.09f, nullptr}, // 步骤5
+    {0.20f, 2.0f, 0.0f, 0.0f, M_PI *1.5f, 0.0f, nullptr}, // 步骤6
     {
         0.0f, 3.0f, 0.0f, 0.0f, 0.0f, 1.0f,
         []() { HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_RESET); }
@@ -83,7 +83,7 @@ void DrawKFS_Task() {
     Motor_X.PID_Angle.Init(10.0f, 0.0f, 0.0f, 0.0f, 10.0f, 10.0f);
     Motor_X.Init(&hfdcan1, Motor_DJI_ID_0x206, Motor_DJI_Control_Method_ANGLE);
 
-    Motor_R.PID_Omega.Init(1300.0f, 200.0f, 0.0f, 0.0f, 2000.0f, 5000.0f);
+    Motor_R.PID_Omega.Init(2000.0f, 500.0f, 0.0f, 0.0f, 5000.0f, 8000.0f);
     Motor_R.PID_Angle.Init(15.0f, 0.0f, 0.0f, 0.0f, 10.0f, 15.0f);
     Motor_R.Init(&hfdcan1, Motor_DJI_ID_0x207, Motor_DJI_Control_Method_ANGLE);
 
