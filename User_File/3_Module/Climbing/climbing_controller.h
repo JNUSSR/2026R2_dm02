@@ -44,8 +44,8 @@
 #define POS_FRONT_LIFT_20cm       movingmm_front(20.0f) //20
 #define POS_REAR_LIFT_20cm        movingmm_rear(220.0f) //220
 
-#define POS_FRONT_FINAL_20cm movingmm_front(-220.0f)
-#define POS_REAR_FINAL_20cm  movingmm_rear(-80.0f)
+#define POS_FRONT_FINAL_20cm      movingmm_front(-220.0f)
+#define POS_REAR_FINAL_20cm       movingmm_rear(-80.0f)
 
 //上40cm台阶
 #define POS_FRONT_RETRACT_40cm    movingmm_front(-420.0f)
@@ -56,7 +56,6 @@
 
 #define POS_FRONT_LIFT_40cm       movingmm_front(20.0f)
 #define POS_REAR_LIFT_40cm        movingmm_rear(413.0f)
-
 
 #define POS_FRONT_FINAL_40cm movingmm_front(-220.0f)
 #define POS_REAR_FINAL_40cm  movingmm_rear(-80.0f)
@@ -75,13 +74,27 @@
 #define DESCEND_FRONT_RAISE_TARGET       movingmm_front(0.0f)
 #define DESCEND_REAR_RAISE_TARGET        movingmm_rear(-210.0f)
 
+//下40cm台阶
+// 下台阶：状态3 触地目标
+#define DESCEND_FRONT_TOUCH_TARGET_40cm       movingmm_front(0.0f)
+#define DESCEND_REAR_TOUCH_TARGET_40cm        movingmm_rear(400.0f)
+
+// 下台阶：状态4 全局下降目标
+#define DESCEND_FRONT_GLOBAL_DOWN_TARGET_40cm movingmm_front(40.0f)
+#define DESCEND_REAR_GLOBAL_DOWN_TARGET_40cm  movingmm_rear(440.0f)
+
+// 下台阶：状态6 抬起过渡目标
+// 前脚保持下层地面接触，后脚保持上层台阶对应高度
+#define DESCEND_FRONT_RAISE_TARGET_40cm       movingmm_front(-400.0f)
+#define DESCEND_REAR_RAISE_TARGET_40cm        movingmm_rear(0.0f)
+
 // ==========================================
 // 武器机构对接位置与时间参数
 // ==========================================
 // 夹武器头前腿位置 (请根据实际物理高度微调)
-#define POS_FRONT_WEAPON_HEAD    movingmm_front(-150.0f) 
+#define POS_FRONT_WEAPON_HEAD    movingmm_front(-250.0f) 
 // 对接武器杆前腿位置 (请根据实际物理高度微调)
-#define POS_FRONT_WEAPON_ROD     movingmm_front(-200.0f) 
+#define POS_FRONT_WEAPON_ROD     movingmm_front(-300.0f) 
 
 // ==========================================
 // 2. 速度、斜坡、时间参数
@@ -98,8 +111,8 @@
 //#define WHEEL_ANGLE_DONE_TOL_RAD      (0.25f) //轮子角度到位容忍度 即误差到某个值时认为轮子已经到位
 
 // 轮子角度斜坡
-#define WHEEL_SLOPE_RPM_UP            (85.0f) //up
-#define WHEEL_SLOPE_RPM_DESCEND       (70.0f) //descend
+#define WHEEL_SLOPE_RPM_UP            (100.0f) //up
+#define WHEEL_SLOPE_RPM_DESCEND       (80.0f) //descend
 #define WHEEL_SLOPE_STEP_UP           (RC_RPM_TO_RADPS(WHEEL_SLOPE_RPM_UP) / TASK_FREQ_HZ)
 #define WHEEL_SLOPE_STEP_DESCEND      (RC_RPM_TO_RADPS(WHEEL_SLOPE_RPM_DESCEND) / TASK_FREQ_HZ)
 
@@ -129,10 +142,10 @@
 #define TIME_SETUP           1500  // 给2秒让它缩腿
 #define TIME_CHASSIS_APPROACH 800  // 底盘向前微调贴紧台阶的时间 (0.8s)
 #define TIME_TOUCH           500  // 触地时间
-#define TIME_LIFT            1500  // 顶升时间
+#define TIME_LIFT            1000  // 顶升时间
 #define TIME_LIFT_REAR_DELAY 100   // 顶升阶段后脚延时启动
-#define TIME_DRIVE           2000  // 平移时间
-#define TIME_RETRACT         1500  // 收腿时间
+#define TIME_DRIVE           1800  // 平移时间
+#define TIME_RETRACT         1000  // 收腿时间
 
 // --- 下台阶时间参数 ---
 #define TIME_DESC_SETUP      1500
@@ -143,6 +156,11 @@
 
 //夹武器头对应时间参数
 #define TIME_WEAPON_ACTION       1500// 武器动作统一执行时间 (1.5秒平滑到位)
+
+// 激光测距寻崖参数
+#define LASER_EDGE_THRESHOLD_MM   620.0f  // 判定门限：激光返回大于 30cm (300mm) 视为踩空
+#define LASER_DEBOUNCE_MAX        50       // 防抖：连续 5ms 检测到大于门限才触发
+#define TIME_FIND_EDGE_TIMEOUT    8000    // 寻崖超时：最多往前开 8 秒，找不到就停机保护
 
 
 // ==========================================
@@ -159,6 +177,7 @@ typedef enum {
     STEP_RETRACT,             // 上台阶: 收腿复位
     STEP_DONE,                // 上台阶完成
 
+    STEP_DESCEND_FIND_EDGE,   // 下台阶: 寻崖模式
     STEP_DESCEND_SETUP,       // 下台阶: 收腿准备
     STEP_DESCEND_TOUCH,       // 下台阶: 触地
     STEP_DESCEND_GLOBAL_DOWN, // 下台阶: 全局下降
@@ -169,81 +188,96 @@ typedef enum {
     STEP_WEAPON_ROD_DOCK      // 对接武器杆专属状态
 } ClimbingState_e;
 
+// 轮子控制模式
 typedef enum {
-    CLIMB_UP_MODE_20CM = 0,
-    CLIMB_UP_MODE_40CM
-} ClimbUpMode_e;
+    WHEEL_MODE_ANGLE = 0,        // 正常斜坡角度跟踪
+    WHEEL_MODE_CREEP,            // OMEGA模式抗台阶阻力
+    WHEEL_MODE_CHASSIS_APPROACH,  // 调用底盘命令前进
+    WHEEL_MODE_FIND_EDGE         // 寻崖底盘持续推进模式
+} WheelMode_e;
 
-#endif // TEST_FEEDBACK_CLIMBING_CONTROLLER_H
-
+// 【核心架构】动作帧配置结构体
+typedef struct {
+    ClimbingState_e state_id;    // 状态标识
+    float front_offset;          // 前腿目标偏置
+    float rear_offset;           // 后腿目标偏置
+    float wheel_travel_rad;      // 轮子角度增量
+    uint32_t duration_ms;        // 本帧执行总时间
+    uint32_t rear_delay_ms;      // 后腿延时时间(顶升用)
+    uint8_t lift_pid_enable;     // 1: 开启重载PID，0: 恢复普通PID
+    WheelMode_e wheel_mode;      // 轮子控制模式
+    uint8_t is_descend_slope;    // 1: 轮子使用下台阶斜坡参数
+} ActionFrame_t;
 
 class ClimbingController {
 private:
+    // --- 表驱动执行引擎变量 ---
+    const ActionFrame_t* current_seq_;  // 当前剧本(动作数组指针)
+    uint8_t current_step_;              // 播放到第几步
+    uint8_t total_steps_;               // 剧本总步数
+    
     ClimbingState_e climb_state_;
     uint32_t state_tick_;
+    uint8_t auto_running_;
+    uint8_t is_zero_recorded_;
+    uint8_t is_lift_pid_mode_;
+    uint8_t rear_lift_delayed_flag_;
 
+    // --- 机械参考锚点 ---
+    float start_pos_front_;
+    float start_pos_rear_;
+    float wheel_target_angle_l_;
+    float wheel_target_angle_r_;
+
+    // --- 激光测距相关 ---
+    float laser_distance_;
+    uint8_t laser_debounce_cnt_;
+
+    // --- 执行器与规划器 ---
     Class_Motor_DJI_C620 motor_lift_front_;
     Class_Motor_DJI_C620 motor_lift_rear_;
     Class_Motor_DJI_C620 motor_wheel_l_;
     Class_Motor_DJI_C620 motor_wheel_r_;
-
     QuinticPlanner planner_front_pos_{0.0f};
     QuinticPlanner planner_rear_pos_{0.0f};
     Class_Slope slope_wheel_l_angle_;
     Class_Slope slope_wheel_r_angle_;
 
-    uint8_t is_zero_recorded_;
-    float start_pos_front_;
-    float start_pos_rear_;
-    float desc_start_pos_front_;
-    float desc_start_pos_rear_;
-    float wheel_target_angle_l_;
-    float wheel_target_angle_r_;
-    uint8_t is_lift_pid_mode_;
-    ClimbingState_e prev_climb_state_;
-
-    uint8_t auto_running_;
-    uint32_t auto_state_enter_tick_;
-    uint8_t descend_mode_;
-    uint8_t chassis_external_control_;
-    uint8_t init_pose_active_;
-    uint8_t init_pose_planned_; 
-    uint8_t rear_lift_delayed_flag_;
-    ClimbUpMode_e up_mode_;
-
-    void HandleStateTransition(uint32_t current_time, uint8_t state_changed);
+    // --- 内部核心逻辑 ---
+    void StartSequence(const ActionFrame_t* seq, uint8_t count, uint8_t start_index);
+    void LoadNextFrame(void);
     void RecordSoftZero(void);
-    void UpdatePidAndSlopeByState(void);
     void UpdateStateTargets(uint32_t current_time);
     void RunLiftAndWheelControl(void);
     void SetLiftPidMode(uint8_t enable_lift);
     void SetWheelSlopeStep(float wheel_step);
-    bool TryTimeTransition(uint32_t now, uint32_t delay_ms, ClimbingState_e next_state);
 
 public:
     ClimbingController();
 
+    void UpdateLaserDistance(float distance) { laser_distance_ = distance; }
     float GetFrontTargetAngle(void) { return motor_lift_front_.Get_Target_Angle(); }
     float GetFrontNowAngle(void) { return motor_lift_front_.Get_Now_Angle(); }
     float GetFrontOut(void) { return motor_lift_front_.Get_Out(); }
-
     float GetRearTargetAngle(void) { return motor_lift_rear_.Get_Target_Angle(); }
     float GetRearNowAngle(void) { return motor_lift_rear_.Get_Now_Angle(); }
     float GetRearOut(void) { return motor_lift_rear_.Get_Out(); }
-
     float GetWheelLTargetAngle(void) { return motor_wheel_l_.Get_Target_Angle(); }
     float GetWheelLNowAngle(void) { return motor_wheel_l_.Get_Now_Angle(); }
     float GetWheelRTargetAngle(void) { return motor_wheel_r_.Get_Target_Angle(); }
     float GetWheelRNowAngle(void) { return motor_wheel_r_.Get_Now_Angle(); }
 
-    ClimbingState_e GetState(void) const;
-    uint8_t IsAutoRunning(void) const;
+    ClimbingState_e GetState(void) const { return climb_state_; }
+    uint8_t IsAutoRunning(void) const { return auto_running_; }
+
+    uint8_t IsFindingEdge(void) const;
 
     void Init(FDCAN_HandleTypeDef *hcan);
     void TaskEntry1ms(void);
     void AutoTask1ms(void);
     void CAN_RxCallback(uint32_t std_id, uint8_t *data);
 
+    // --- 对外公开接口 (保留完整功能) ---
     void AutoStart(void);
     void AutoStart20cm(void);
     void AutoStart40cm(void);
@@ -252,10 +286,13 @@ public:
     void AutoStartFromTouch40cm(void);
     void DescendAutoStart(void);
     void DescendAutoStart20cm(void);
+    void DescendAutoStart40cm(void);
     void InitPoseStart(void);
-    void WeaponHeadClampStart(void); // 触发: 去夹武器头
-    void WeaponRodDockStart(void);   // 触发: 去对接武器杆
+    void WeaponHeadClampStart(void); 
+    void WeaponRodDockStart(void);   
 
     void DescendManualNext(void);
     void EmergencyStop(void);
 };
+
+#endif // TEST_FEEDBACK_CLIMBING_CONTROLLER_H

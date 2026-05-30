@@ -23,13 +23,14 @@ const ArmStep IDLE[] = {
 const ArmStep DrawKFS[] = {
     //  Z目标, Z耗时 |  X目标, X耗时 |  R目标, R耗时
     {
-        0.05f, 5.0f, 0.0f, 0.0f, M_PI / 2, 5.0f,
+        0.10f, 2.5f, 0.0f, 0.0f, 0.0, 0.0f,
         []() { HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET); }
     }, // 步骤1
-    {0.05f, 0.0f, 0.15f, 5.0f, M_PI / 2, 0.0f, nullptr}, // 步骤2
-    {0.10f, 5.0f, 0.15f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤3
-    {0.10f, 0.0f, 0.0f, 5.0f, M_PI / 2, 0.0f, nullptr}, // 步骤4
-    {0.10f, 0.0f, 0.0f, 0.0f, M_PI *3 / 2, 0.1f, nullptr}, // 步骤5
+    {0.10f, 0.0f, 0.40f, 5.0f, M_PI / 2, 5.0f, nullptr}, // 步骤2
+    {0.15f, 2.0f, 0.40f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤3
+    {0.15f, 0.0f, 0.0f, 5.0f, M_PI / 2, 0.0f, nullptr}, // 步骤4
+    {0.15f, 0.0f, 0.0f, 0.0f, M_PI * 1.5f, 0.2f, nullptr}, // 步骤5
+    {0.15f, 2.0f, 0.0f, 0.0f, M_PI *1.5f, 0.0f, nullptr}, // 步骤6
     {
         0.0f, 3.0f, 0.0f, 0.0f, 0.0f, 1.0f,
         []() { HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_RESET); }
@@ -39,15 +40,15 @@ const ArmStep DrawKFS[] = {
 const ArmStep DrawKFS_40cm[] = {
     //  Z目标, Z耗时 |  X目标, X耗时 |  R目标, R耗时
     {
-        0.25f, 5.0f, 0.0f, 0.0f, M_PI / 2, 5.0f,
+        0.30f, 5.0f, 0.0f, 0.0f, M_PI / 2, 5.0f,
         []() { HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET); }
     }, // 步骤1
-    {0.25f, 0.0f, 0.15f, 5.0f, M_PI / 2, 0.0f, nullptr}, // 步骤2
-    {0.30f, 5.0f, 0.15f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤3
-    {0.30f, 0.0f, 0.0f, 5.0f, M_PI / 2, 0.0f, nullptr}, // 步骤4
-    {0.10f, 5.0f, 0.0f, 0.0f, M_PI *3 / 2, 0.1f, nullptr}, // 步骤5
+    {0.30f, 0.0f, 0.40f, 5.0f, M_PI / 2, 0.0f, nullptr}, // 步骤2
+    {0.35f, 5.0f, 0.40f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤3
+    {0.35f, 0.0f, 0.0f, 5.0f, M_PI / 2, 0.0f, nullptr}, // 步骤4
+    {0.10f, 4.0f, 0.0f, 0.0f, M_PI * 1.5f, 0.1f, nullptr}, // 步骤5
     {
-        0.0f, 3.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+        0.0f, 2.0f, 0.0f, 0.0f, 0.0f, 1.0f,
         []() { HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_RESET); }
     }
 };
@@ -58,11 +59,11 @@ const ArmStep DrawKFS_Below20cm[] = {
         0.0f, 2.0f, 0.0f, 0.0f, M_PI / 2, 5.0f,
         []() { HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET); }
     }, // 步骤1
-    {0.0f, 0.0f, 0.15f, 5.0f, M_PI / 2, 0.0f, nullptr}, // 步骤2
-    {0.10f, 3.0f, 0.15f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤3
-    {0.10f, 0.0f, 0.0f, 5.0f, M_PI *3 / 2, 0.1f, nullptr}, // 步骤4
+    {0.0f, 0.0f, 0.40f, 5.0f, M_PI / 2, 0.0f, nullptr}, // 步骤2
+    {0.10f, 2.0f, 0.40f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤3
+    {0.10f, 0.0f, 0.0f, 5.0f, M_PI * 1.5f, 0.1f, nullptr}, // 步骤4
     {
-        0.0f, 3.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+        0.0f, 2.0f, 0.0f, 0.0f, 0.0f, 1.0f,
         []() { HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_RESET); }
     }
 };
@@ -78,11 +79,11 @@ void DrawKFS_Task() {
     Motor_Z.Init(&hfdcan2, Motor_DJI_ID_0x205, Motor_DJI_Control_Method_ANGLE);
 
     // 同步 R2_Z: DrawKFS 的 X/R 在 CAN1 的 0x206/0x207
-    Motor_X.PID_Omega.Init(1000.0f, 200.0f, 0.0f, 0.0f, 1500.0f, 3000.0f);
+    Motor_X.PID_Omega.Init(1000.0f, 200.0f, 0.0f, 0.0f, 2000.0f, 4000.0f);
     Motor_X.PID_Angle.Init(10.0f, 0.0f, 0.0f, 0.0f, 10.0f, 10.0f);
     Motor_X.Init(&hfdcan1, Motor_DJI_ID_0x206, Motor_DJI_Control_Method_ANGLE);
 
-    Motor_R.PID_Omega.Init(1300.0f, 200.0f, 0.0f, 0.0f, 1500.0f, 3000.0f);
+    Motor_R.PID_Omega.Init(1300.0f, 200.0f, 0.0f, 0.0f, 2000.0f, 5000.0f);
     Motor_R.PID_Angle.Init(15.0f, 0.0f, 0.0f, 0.0f, 10.0f, 15.0f);
     Motor_R.Init(&hfdcan1, Motor_DJI_ID_0x207, Motor_DJI_Control_Method_ANGLE);
 
@@ -92,8 +93,8 @@ void DrawKFS_Task() {
 
     float dt = 0.001;
     PlannedJoint Joint_Z(Adapter_Z, 0, 0.4, 0, -1, 0.5 * 1 / 0.017f, dt); //双倍抬升
-    PlannedJoint Joint_X(Adapter_X, 0, 0.32, 0, 1, 1 / 0.0165f, dt);
-    PlannedJoint Joint_R(Adapter_R, 0,PI, 0, -1, 1, dt);
+    PlannedJoint Joint_X(Adapter_X, 0, 0.45, 0, 1, 1 / 0.0165f, dt);
+    PlannedJoint Joint_R(Adapter_R, 0,2*M_PI, 0, -1, 1, dt);
 
     // 实例化动作播放器
     ArmSequencePlayer player(Joint_Z, Joint_X, Joint_R);
