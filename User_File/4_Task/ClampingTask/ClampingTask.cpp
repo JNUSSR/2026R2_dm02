@@ -3,6 +3,7 @@
 #include "cmsis_os2.h"
 #include "main.h"
 #include "ChassisTask.h"
+#include "ClimbingTask2.h"
 
 ClampingController clampingCtrl;
 
@@ -66,6 +67,8 @@ void Clamping_Auto_Start(void)
     osDelay(500);
     // 移动到垂直（对接）位置
     Clamping_Get_Controller().MoveToDockAngle();
+
+    Climbing_Init_Pose_Start();
 }
 
 void Clamping_Auto_Adjust(void)

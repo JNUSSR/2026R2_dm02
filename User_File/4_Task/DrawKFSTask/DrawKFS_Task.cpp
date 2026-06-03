@@ -11,6 +11,7 @@
 #include "stm32h723xx.h"
 #include "stm32h7xx_hal_gpio.h"
 #include "uart_printf.h"
+#include <math.h>
 
 Class_Motor_DJI_C620 Motor_Z;
 Class_Motor_DJI_C610 Motor_X;
@@ -71,11 +72,11 @@ const ArmStep DrawKFS_Below20cm[] = {
 };
 
 const ArmStep PutKFS_OrderTwo[] = {
-    {0.20f,2.5f, 0.0f, 0.0f, -M_PI / 2, 2.0f,nullptr},// 步骤1
-    {1.1f,7.0f,0.0f,0.0f, M_PI / 2, 5.0f,
+    {0.20f,2.5f, 0.03f, 0.5f, -M_PI / 2, 2.0f,nullptr},// 步骤1
+    {1.0f,7.0f,0.0f,0.0f, M_PI / 2, 7.0f,
     []{HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET);}},//步骤2
-    {1.1f,0.0f, 0.35f,5.0f, M_PI / 2, 0.0f,nullptr},//步骤3
-    {1.1f,2.0f,0.35f,0.f, M_PI / 2, 0.0f,
+    {1.0f,0.0f, 0.45f,5.0f, M_PI / 2, 0.0f,nullptr},//步骤3
+    {1.0f,2.0f,0.45f,0.0f, M_PI / 2, 0.0f,
     []{HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_RESET);}},//步骤4
     {0.0f, 7.0f, 0.0f, 5.0f, 0.0f, 2.0f,}
 };
@@ -105,9 +106,9 @@ void DrawKFS_Task() {
     MotorAdapter_C610 Adapter_R(Motor_R);
 
     float dt = 0.001;
-    PlannedJoint Joint_Z(Adapter_Z, 0, 0.4, 0, -1, 0.5 * 1 / 0.017f, dt); //双倍抬升
-    PlannedJoint Joint_X(Adapter_X, 0, 0.45, 0, 1, 1 / 0.0165f, dt);
-    PlannedJoint Joint_R(Adapter_R, 0,2*M_PI, 0, -1, 1, dt);
+    PlannedJoint Joint_Z(Adapter_Z, 0, 1.2, 0, -1, 0.5 * 1 / 0.017f, dt); //双倍抬升
+    PlannedJoint Joint_X(Adapter_X, -0.03, 0.45, 0, 1, 1 / 0.0165f, dt);
+    PlannedJoint Joint_R(Adapter_R, -M_PI,2*M_PI, 0, -1, 1, dt);
 
     // 实例化动作播放器
     ArmSequencePlayer player(Joint_Z, Joint_X, Joint_R);
