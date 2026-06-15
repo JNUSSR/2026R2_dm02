@@ -49,7 +49,8 @@ ClimbingState_e Climbing_Get_State(void);
 // 允许 C++ 文件获取控制器实例引用
 ClimbingController &Climbing_Get_Controller(void);
 
-uint8_t Climbing_Is_Finding_Edge(void);
+uint8_t Climbing_Is_Finding_Edge_Front(void);
+uint8_t Climbing_Is_Finding_Edge_Rear(void);
 #endif
 
 #endif // TEST_FEEDBACK_CLIMBINGTASK2_H

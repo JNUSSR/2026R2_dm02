@@ -39,6 +39,7 @@ static const ActionFrame_t Seq_Descend[] = {
 // 剧本 4: 下40cm台阶流程，由于机械结构，需要后腿在前面先下
 static const ActionFrame_t Seq_Descend40cm[] = {
     // state_id, front_offset, rear_offset, wheel_rad, duration, delay, PID, wheel_mode, desc_slope
+    { STEP_DESCEND_FIND_EDGE, POS_FRONT_Init, POS_REAR_Init, 0.0f, TIME_FIND_EDGE_TIMEOUT, 0, 0, WHEEL_MODE_FIND_EDGE_BACKWARD, 1 },
     { STEP_DESCEND_SETUP, POS_FRONT_Init, POS_REAR_Init, 
           0.0f, TIME_DESC_SETUP, 0, 0, WHEEL_MODE_ANGLE, 1 },
     { STEP_DESCEND_TOUCH, DESCEND_FRONT_TOUCH_TARGET_40cm, DESCEND_REAR_TOUCH_TARGET_40cm, 
@@ -46,16 +47,16 @@ static const ActionFrame_t Seq_Descend40cm[] = {
     { STEP_DESCEND_GLOBAL_DOWN, DESCEND_FRONT_GLOBAL_DOWN_TARGET_40cm, DESCEND_REAR_GLOBAL_DOWN_TARGET_40cm, 
           0.0f, TIME_DESC_GLOBAL_DOWN, 0, 1, WHEEL_MODE_ANGLE, 1 },
     { STEP_DESCEND_DRIVE, DESCEND_FRONT_GLOBAL_DOWN_TARGET_40cm, DESCEND_REAR_GLOBAL_DOWN_TARGET_40cm, 
-          WHEEL_TRAVEL_DESCEND_RAD, DESCEND_DRIVE_TIME_MS, 0, 1, WHEEL_MODE_ANGLE, 1 },
+          -WHEEL_TRAVEL_DESCEND_RAD, DESCEND_DRIVE_TIME_MS, 0, 1, WHEEL_MODE_ANGLE, 1 },
     { STEP_DESCEND_RAISE, DESCEND_FRONT_RAISE_TARGET_40cm, DESCEND_REAR_RAISE_TARGET_40cm, 
-          0.0f, TIME_DESC_RAISE, 0, 1, WHEEL_MODE_ANGLE, 1 }
+          0.0f, 4000, 0, 1, WHEEL_MODE_ANGLE, 1 }
 };
 
 
 // 单步独立剧本
 static const ActionFrame_t Seq_InitPose[] = {
     { STEP_IDLE, POS_FRONT_Init, POS_REAR_Init, 
-        0.0f, 3000, 0,
+        0.0f, 2000, 0,
          0, WHEEL_MODE_ANGLE, 0 }
 };
 static const ActionFrame_t Seq_WeaponHeadClamp[] = {
@@ -243,6 +244,23 @@ void ClimbingController::AutoTask1ms(void)
         }
     }
 
+    if (frame.wheel_mode == WHEEL_MODE_FIND_EDGE_BACKWARD) {
+        Chassis_Set_Target(-0.1f, 0.0f, 0.0f); // 给底盘下发向后(负数)的微小速度
+        
+        if (laser_distance_rear_ > LASER_EDGE_THRESHOLD_MM) { // 借用相同的62cm门限
+            laser_debounce_cnt_rear_++;
+            if (laser_debounce_cnt_rear_ >= LASER_DEBOUNCE_MAX) {
+                Chassis_Set_Target(0.0f, 0.0f, 0.0f); // 瞬间死区钉住！
+                laser_debounce_cnt_rear_ = 0;              
+                current_step_++; 
+                LoadNextFrame(); 
+                return;          
+            }
+        } else {
+            laser_debounce_cnt_rear_ = 0; 
+        }
+    }
+
     // 核心流转：如果时间走完，切换下一帧
     if ((now - state_tick_) >= frame.duration_ms)
     {
@@ -252,7 +270,7 @@ void ClimbingController::AutoTask1ms(void)
         }
 
         //如果寻崖模式跑满了 8 秒还没触发上面的跳帧，说明找不着台阶！
-        if (frame.wheel_mode == WHEEL_MODE_FIND_EDGE) {
+        if (frame.wheel_mode == WHEEL_MODE_FIND_EDGE || frame.wheel_mode == WHEEL_MODE_FIND_EDGE_BACKWARD) {
             Chassis_Set_Target(0.0f, 0.0f, 0.0f); // 安全刹车
             auto_running_ = 0;                              // 强制停机，保护机器人不乱跑
             return; 
@@ -401,7 +419,7 @@ void ClimbingController::DescendAutoStart(void) { StartSequence(Seq_Descend, 6, 
 void ClimbingController::DescendAutoStart20cm(void) { StartSequence(Seq_Descend, 6, 0); }
 
 //下40cm接口
-void ClimbingController::DescendAutoStart40cm(void) { StartSequence(Seq_Descend40cm, 5, 0); }
+void ClimbingController::DescendAutoStart40cm(void) { StartSequence(Seq_Descend40cm, 6, 0); }
 
 //武器头和武器杆
 void ClimbingController::WeaponHeadClampStart(void) { StartSequence(Seq_WeaponHeadClamp, 1, 0); }
@@ -409,10 +427,14 @@ void ClimbingController::WeaponRodDockStart(void) { StartSequence(Seq_WeaponRodD
 
 void ClimbingController::InitPoseStart(void) { StartSequence(Seq_InitPose, 1, 0); }
 
-uint8_t ClimbingController::IsFindingEdge(void) const
+uint8_t ClimbingController::IsFindingEdgeFront(void) const
 {
     if (!auto_running_ || current_seq_ == nullptr) return 0;
-    
-    // 只要当前步的轮子模式是 FIND_EDGE，就返回 1
     return (current_seq_[current_step_].wheel_mode == WHEEL_MODE_FIND_EDGE) ? 1 : 0;
+}
+
+uint8_t ClimbingController::IsFindingEdgeRear(void) const
+{
+    if (!auto_running_ || current_seq_ == nullptr) return 0;
+    return (current_seq_[current_step_].wheel_mode == WHEEL_MODE_FIND_EDGE_BACKWARD) ? 1 : 0;
 }
