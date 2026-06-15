@@ -227,7 +227,7 @@ void ClimbingController::AutoTask1ms(void)
         Chassis_Set_Target(0.1f, 0.0f, 0.0f); // 给底盘下发微小前移速度
         
         // 判定激光距离是否踩空
-        if (laser_distance_ > LASER_EDGE_THRESHOLD_MM) {
+        if (laser_distance_ > LASER_EDGE_THRESHOLD_20MM) {
             laser_debounce_cnt_++;
             // 连续 N 毫秒达标，确认找到悬崖
             if (laser_debounce_cnt_ >= LASER_DEBOUNCE_MAX) {
@@ -247,7 +247,7 @@ void ClimbingController::AutoTask1ms(void)
     if (frame.wheel_mode == WHEEL_MODE_FIND_EDGE_BACKWARD) {
         Chassis_Set_Target(-0.1f, 0.0f, 0.0f); // 给底盘下发向后(负数)的微小速度
         
-        if (laser_distance_rear_ > LASER_EDGE_THRESHOLD_MM) { // 借用相同的62cm门限
+        if (laser_distance_rear_ > LASER_EDGE_THRESHOLD_40MM) {
             laser_debounce_cnt_rear_++;
             if (laser_debounce_cnt_rear_ >= LASER_DEBOUNCE_MAX) {
                 Chassis_Set_Target(0.0f, 0.0f, 0.0f); // 瞬间死区钉住！

@@ -158,7 +158,8 @@
 #define TIME_WEAPON_ACTION       1500// 武器动作统一执行时间 (1.5秒平滑到位)
 
 // 激光测距寻崖参数
-#define LASER_EDGE_THRESHOLD_MM   620.0f  // 判定门限：激光返回大于 30cm (300mm) 视为踩空
+#define LASER_EDGE_THRESHOLD_20MM   620.0f  // 判定门限：激光返回大于 62cm (620mm) 视为踩空
+#define LASER_EDGE_THRESHOLD_40MM   820.0f  // 判定门限：激光返回大于 62cm (620mm) 视为踩空
 #define LASER_DEBOUNCE_MAX        50       // 防抖：连续 5ms 检测到大于门限才触发
 #define TIME_FIND_EDGE_TIMEOUT    8000    // 寻崖超时：最多往前开 8 秒，找不到就停机保护
 
