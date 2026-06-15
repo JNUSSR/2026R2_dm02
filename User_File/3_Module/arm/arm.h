@@ -117,24 +117,25 @@ public:
     ArmSequencePlayer(PlannedJoint& joint_z,
                       PlannedJoint& joint_x,
                       PlannedJoint& joint_r)
-        : z_(joint_z), x_(joint_x), r_(joint_r), state_(IDLE), current_sequence_(nullptr) {}
+        : z_(joint_z), x_(joint_x), r_(joint_r), state_(IDLE), return_to_idle_when_done_(false), current_sequence_(nullptr) {}
 
-    void Play(const ArmStep* sequence, uint16_t step_count);
+    void Play(const ArmStep* sequence, uint16_t step_count, bool return_to_idle_when_done = false);
     void Stop();
     bool IsPlaying() const;
     void Update();
 
 private:
-    enum State { IDLE, RUNNING_STEP, WAITING_STEP };
+    PlannedJoint& z_;
+    PlannedJoint& x_;
+    PlannedJoint& r_;
+
+    enum State { IDLE, RUNNING_STEP, WAITING_STEP, DONE };
     State state_;
+    bool return_to_idle_when_done_;
 
     const ArmStep* current_sequence_;
     uint16_t total_steps_;
     uint16_t current_step_index_;
-
-    PlannedJoint& z_;
-    PlannedJoint& x_;
-    PlannedJoint& r_;
 };
 
 #endif // TEST_FEEDBACK_ARM_H

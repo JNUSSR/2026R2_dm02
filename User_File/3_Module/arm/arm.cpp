@@ -86,11 +86,12 @@ void PlannedJoint::Update() {
     joint_.Update(planner_.GetNextPosition(dt_));
 }
 
-void ArmSequencePlayer::Play(const ArmStep* sequence, uint16_t step_count) {
+void ArmSequencePlayer::Play(const ArmStep* sequence, uint16_t step_count, bool return_to_idle_when_done) {
     if (sequence == nullptr || step_count == 0) return;
     current_sequence_ = sequence;
     total_steps_ = step_count;
     current_step_index_ = 0;
+    return_to_idle_when_done_ = return_to_idle_when_done;
     state_ = RUNNING_STEP;
 }
 
@@ -99,7 +100,7 @@ void ArmSequencePlayer::Stop() {
 }
 
 bool ArmSequencePlayer::IsPlaying() const {
-    return state_ != IDLE;
+    return state_ == RUNNING_STEP || state_ == WAITING_STEP;
 }
 
 void ArmSequencePlayer::Update() {
@@ -125,7 +126,7 @@ void ArmSequencePlayer::Update() {
         if (!z_.IsMoving() && !x_.IsMoving() && !r_.IsMoving()) {
             current_step_index_++;
             if (current_step_index_ >= total_steps_) {
-                state_ = IDLE; // 整个动作序列完成
+                state_ = return_to_idle_when_done_ ? IDLE : DONE; // 整个动作序列完成
             } else {
                 state_ = RUNNING_STEP; // 继续下一步
             }
