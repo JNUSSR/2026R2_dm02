@@ -158,7 +158,8 @@
 #define TIME_WEAPON_ACTION       1500// 武器动作统一执行时间 (1.5秒平滑到位)
 
 // 激光测距寻崖参数
-#define LASER_EDGE_THRESHOLD_MM   620.0f  // 判定门限：激光返回大于 30cm (300mm) 视为踩空
+#define LASER_EDGE_THRESHOLD_20MM   620.0f  // 判定门限：激光返回大于 62cm (620mm) 视为踩空
+#define LASER_EDGE_THRESHOLD_40MM   820.0f  // 判定门限：激光返回大于 62cm (620mm) 视为踩空
 #define LASER_DEBOUNCE_MAX        50       // 防抖：连续 5ms 检测到大于门限才触发
 #define TIME_FIND_EDGE_TIMEOUT    8000    // 寻崖超时：最多往前开 8 秒，找不到就停机保护
 
@@ -193,7 +194,8 @@ typedef enum {
     WHEEL_MODE_ANGLE = 0,        // 正常斜坡角度跟踪
     WHEEL_MODE_CREEP,            // OMEGA模式抗台阶阻力
     WHEEL_MODE_CHASSIS_APPROACH,  // 调用底盘命令前进
-    WHEEL_MODE_FIND_EDGE         // 寻崖底盘持续推进模式
+    WHEEL_MODE_FIND_EDGE,         // 前腿寻崖 (前进)
+    WHEEL_MODE_FIND_EDGE_BACKWARD // 后腿寻崖 (后退)
 } WheelMode_e;
 
 // 【核心架构】动作帧配置结构体
@@ -230,8 +232,12 @@ private:
     float wheel_target_angle_r_;
 
     // --- 激光测距相关 ---
+    // 前腿激光变量
     float laser_distance_;
     uint8_t laser_debounce_cnt_;
+    // 后腿激光变量
+    float laser_distance_rear_;
+    uint8_t laser_debounce_cnt_rear_;
 
     // --- 执行器与规划器 ---
     Class_Motor_DJI_C620 motor_lift_front_;
@@ -256,6 +262,7 @@ public:
     ClimbingController();
 
     void UpdateLaserDistance(float distance) { laser_distance_ = distance; }
+    void UpdateLaserDistanceRear(float distance) { laser_distance_rear_ = distance; }
     float GetFrontTargetAngle(void) { return motor_lift_front_.Get_Target_Angle(); }
     float GetFrontNowAngle(void) { return motor_lift_front_.Get_Now_Angle(); }
     float GetFrontOut(void) { return motor_lift_front_.Get_Out(); }
@@ -270,7 +277,8 @@ public:
     ClimbingState_e GetState(void) const { return climb_state_; }
     uint8_t IsAutoRunning(void) const { return auto_running_; }
 
-    uint8_t IsFindingEdge(void) const;
+    uint8_t IsFindingEdgeFront(void) const;
+    uint8_t IsFindingEdgeRear(void) const;
 
     void Init(FDCAN_HandleTypeDef *hcan);
     void TaskEntry1ms(void);
