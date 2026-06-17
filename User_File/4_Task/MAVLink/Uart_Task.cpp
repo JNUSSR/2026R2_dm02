@@ -14,11 +14,19 @@
 
 uint16_t rx_len = 0;
 
+// 左臂标志位
 extern bool drawkfs_flag;
 extern bool idle_flag;
 extern bool drawkfs_40cm_flag;
 extern bool drawkfs_below20cm_flag;
 extern bool putkfs_ordertwo_flag;
+
+// 右臂标志位
+extern bool right_drawkfs_flag;
+extern bool right_idle_flag;
+extern bool right_drawkfs_40cm_flag;
+extern bool right_drawkfs_below20cm_flag;
+extern bool right_putkfs_ordertwo_flag;
 
 extern osSemaphoreId_t uartSemaphoreHandle;
 
@@ -41,22 +49,29 @@ void UartTask() {
                         mavlink_arm_control_t arm_control;
                         mavlink_msg_arm_control_decode(&msg, &arm_control);
 
-                        switch (arm_control.action_cmd) {
-                            case ARM_ACTION_IDLE:
-                                idle_flag = true;
-                                break;
-                            case ARM_DRAW_KFS_20cm:
-                                drawkfs_flag = true;
-                                break;
-                            case ARM_DRAW_KFS_40cm:
-                                drawkfs_40cm_flag = true;
-                                break;
-                            case ARM_DRAW_KFS_BELOW_20cm:
-                                drawkfs_below20cm_flag = true;
-                                break;
-                            case ARM_PUT_KFS_ORDER_TWO:
-                                putkfs_ordertwo_flag = true;
-                                break;
+                        uint8_t target = arm_control.target_arm;
+                        uint8_t cmd    = arm_control.action_cmd;
+
+                        // 1. 如果目标是 左臂(0) 或 双臂(2)，则触发左臂对应的标志位
+                        if (target == ARM_SELECT_LEFT || target == ARM_SELECT_BOTH) {
+                            switch (cmd) {
+                                case ARM_ACTION_IDLE:             idle_flag = true; break;
+                                case ARM_DRAW_KFS_20cm:           drawkfs_flag = true; break;
+                                case ARM_DRAW_KFS_40cm:           drawkfs_40cm_flag = true; break;
+                                case ARM_DRAW_KFS_BELOW_20cm:     drawkfs_below20cm_flag = true; break;
+                                case ARM_PUT_KFS_ORDER_TWO:       putkfs_ordertwo_flag = true; break;
+                            }
+                        }
+
+                        // 2. 如果目标是 右臂(1) 或 双臂(2)，则触发右臂对应的标志位
+                        if (target == ARM_SELECT_RIGHT || target == ARM_SELECT_BOTH) {
+                            switch (cmd) {
+                                case ARM_ACTION_IDLE:             right_idle_flag = true; break;
+                                case ARM_DRAW_KFS_20cm:           right_drawkfs_flag = true; break;
+                                case ARM_DRAW_KFS_40cm:           right_drawkfs_40cm_flag = true; break;
+                                case ARM_DRAW_KFS_BELOW_20cm:     right_drawkfs_below20cm_flag = true; break;
+                                case ARM_PUT_KFS_ORDER_TWO:       right_putkfs_ordertwo_flag = true; break;
+                            }
                         }
                     } else if (msg.msgid == MAVLINK_MSG_ID_CHASSIS_VELOCITY_CMD) {
                         mavlink_chassis_velocity_cmd_t chassis_velocity_cmd;

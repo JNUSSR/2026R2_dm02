@@ -16,12 +16,12 @@
 // ================= 左臂电机 =================
 Class_Motor_DJI_C620 Motor_Z;
 Class_Motor_DJI_C610 Motor_X;
-Class_Motor_DJI_C610 Motor_R;
+Class_Motor_DJI_C620 Motor_R;
 
 // ================= 右臂电机 =================
 Class_Motor_DJI_C620 Motor_Z_R;
 Class_Motor_DJI_C610 Motor_X_R;
-Class_Motor_DJI_C610 Motor_R_R;
+Class_Motor_DJI_C620 Motor_R_R;
 
 #define ARRAY_LEN(arr) (sizeof(arr) / sizeof(arr[0]))
 
@@ -139,8 +139,8 @@ void DrawKFS_Task() {
     Motor_X.PID_Angle.Init(10.0f, 0.0f, 0.0f, 0.0f, 10.0f, 10.0f);
     Motor_X.Init(&hfdcan1, Motor_DJI_ID_0x206, Motor_DJI_Control_Method_ANGLE);
 
-    Motor_R.PID_Omega.Init(2200.0f, 500.0f, 0.0f, 0.0f, 5000.0f, 8000.0f);
-    Motor_R.PID_Angle.Init(15.0f, 0.0f, 0.0f, 0.0f, 10.0f, 15.0f);
+    Motor_R.PID_Omega.Init(1500.0f, 600.0f, 0.0f, 0.0f, 3000.0f, 8000.0f);
+    Motor_R.PID_Angle.Init(20.0f, 0.0f, 0.0f, 0.0f, 10.0f, 15.0f);
     Motor_R.Init(&hfdcan1, Motor_DJI_ID_0x207, Motor_DJI_Control_Method_ANGLE);
 
     // ----------------- 右臂初始化 -----------------
@@ -152,18 +152,18 @@ void DrawKFS_Task() {
     Motor_X_R.PID_Angle.Init(10.0f, 0.0f, 0.0f, 0.0f, 10.0f, 10.0f);
     Motor_X_R.Init(&hfdcan3, Motor_DJI_ID_0x202, Motor_DJI_Control_Method_ANGLE);
 
-    Motor_R_R.PID_Omega.Init(2200.0f, 500.0f, 0.0f, 0.0f, 5000.0f, 8000.0f);
-    Motor_R_R.PID_Angle.Init(15.0f, 0.0f, 0.0f, 0.0f, 10.0f, 15.0f);
+    Motor_R_R.PID_Omega.Init(1500.0f, 600.0f, 0.0f, 0.0f, 3000.0f, 8000.0f);
+    Motor_R_R.PID_Angle.Init(20.0f, 0.0f, 0.0f, 0.0f, 10.0f, 15.0f);
     Motor_R_R.Init(&hfdcan3, Motor_DJI_ID_0x203, Motor_DJI_Control_Method_ANGLE);
 
     // ----------------- 适配器配置 -----------------
     MotorAdapter_C620 Adapter_Z(Motor_Z);
     MotorAdapter_C610 Adapter_X(Motor_X);
-    MotorAdapter_C610 Adapter_R(Motor_R);
+    MotorAdapter_C620 Adapter_R(Motor_R);
 
     MotorAdapter_C620 Adapter_Z_R(Motor_Z_R);
     MotorAdapter_C610 Adapter_X_R(Motor_X_R);
-    MotorAdapter_C610 Adapter_R_R(Motor_R_R);
+    MotorAdapter_C620 Adapter_R_R(Motor_R_R);
 
     float dt = 0.001;
     // 左臂关节

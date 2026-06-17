@@ -1,5 +1,5 @@
 /** @file
- *  @brief MAVLink comm protocol built from R2_V3.xml
+ *  @brief MAVLink comm protocol built from R2_V4.xml
  *  @see http://mavlink.org
  */
 #pragma once
@@ -7,7 +7,7 @@
 #ifndef MAVLINK_VERSION_H
 #define MAVLINK_VERSION_H
 
-#define MAVLINK_BUILD_DATE "Sat May 30 2026"
+#define MAVLINK_BUILD_DATE "Wed Jun 17 2026"
 #define MAVLINK_WIRE_PROTOCOL_VERSION "2.0"
 #define MAVLINK_MAX_DIALECT_PAYLOAD_SIZE 12
  
