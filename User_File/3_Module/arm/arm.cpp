@@ -111,7 +111,7 @@ void ArmSequencePlayer::Update() {
 
         // 优先执行自定义动作 (例如 GPIO 控制、printf 打印等)
         if (step.custom_action != nullptr) {
-            step.custom_action();
+            step.custom_action(arm_id_); 
         }
 
         // 如果 duration > 0 才下发移动指令，否则保持原位不动

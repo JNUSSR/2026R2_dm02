@@ -101,7 +101,7 @@ private:
     float dt_;
 };
 
-typedef void (*ActionCallback)();
+typedef void (*ActionCallback)(uint8_t arm_id);
 
 struct ArmStep {
     float target_z, duration_z;
@@ -114,10 +114,11 @@ struct ArmStep {
 class ArmSequencePlayer {
 public:
     // 直接接收 PlannedJoint 引用
-    ArmSequencePlayer(PlannedJoint& joint_z,
+    ArmSequencePlayer(uint8_t arm_id,
+                      PlannedJoint& joint_z,
                       PlannedJoint& joint_x,
                       PlannedJoint& joint_r)
-        : z_(joint_z), x_(joint_x), r_(joint_r), state_(IDLE), return_to_idle_when_done_(false), current_sequence_(nullptr) {}
+        : arm_id_(arm_id), z_(joint_z), x_(joint_x), r_(joint_r), state_(IDLE), return_to_idle_when_done_(false), current_sequence_(nullptr) {}
 
     void Play(const ArmStep* sequence, uint16_t step_count, bool return_to_idle_when_done = false);
     void Stop();
@@ -131,6 +132,9 @@ private:
 
     enum State { IDLE, RUNNING_STEP, WAITING_STEP, DONE };
     State state_;
+
+    uint8_t arm_id_;
+
     bool return_to_idle_when_done_;
 
     const ArmStep* current_sequence_;

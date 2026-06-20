@@ -51,15 +51,29 @@ const ArmStep DrawKFS[] = {
     //  Z目标, Z耗时 |  X目标, X耗时 |  R目标, R耗时
     {
         0.15f, 2.5f, 0.0f, 0.0f, 0.0, 0.0f,
-        []() { HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET); }
+        [](uint8_t arm_id) { 
+            if (arm_id == 0) {
+                HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET);
+            }
+            else if (arm_id == 1) {
+                HAL_GPIO_WritePin(GPIOA,GPIO_PIN_2, GPIO_PIN_SET);
+            }
+        }
     }, // 步骤1
     {0.15f, 0.0f, 0.50f, 5.0f, M_PI / 2, 5.0f, nullptr}, // 步骤2
     {0.20f, 2.0f, 0.50f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤3
     {0.20f, 0.0f, 0.0f, 5.0f, M_PI / 2, 0.0f, nullptr}, // 步骤4
     {0.50f, 4.0f, 0.0f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤5
     {
-    0.50f, 3.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-        []() { HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET); }
+    0.50f, 3.0f, 0.0f, 0.0f, M_PI, 1.0f,
+        [](uint8_t arm_id) { 
+            if (arm_id == 0) {
+                HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET);
+            }
+            else if (arm_id == 1) {
+                HAL_GPIO_WritePin(GPIOA,GPIO_PIN_2, GPIO_PIN_SET);
+            }
+        }
     }
 };
 
@@ -67,15 +81,29 @@ const ArmStep DrawKFS_40cm[] = {
     //  Z目标, Z耗时 |  X目标, X耗时 |  R目标, R耗时
     {
         0.35f, 5.0f, 0.0f, 0.0f, 0, 0.0f,
-        []() { HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET); }
+        [](uint8_t arm_id) { 
+            if (arm_id == 0) {
+                HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET);
+            }
+            else if (arm_id == 1) {
+                HAL_GPIO_WritePin(GPIOA,GPIO_PIN_2, GPIO_PIN_SET);
+            }
+        }
     }, // 步骤1
     {0.35f, 0.0f, 0.50f, 5.0f, M_PI / 2, 5.0f, nullptr}, // 步骤2
     {0.40f, 5.0f, 0.50f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤3
     {0.40f, 0.0f, 0.0f, 5.0f, M_PI / 2, 0.0f, nullptr}, // 步骤4
     {0.50f, 2.0f, 0.0f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤5
     {
-        0.50f, 2.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-        []() { HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET); }
+        0.50f, 2.0f, 0.0f, 0.0f, M_PI, 1.0f,
+        [](uint8_t arm_id) { 
+            if (arm_id == 0) {
+                HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET);
+            }
+            else if (arm_id == 1) {
+                HAL_GPIO_WritePin(GPIOA,GPIO_PIN_2, GPIO_PIN_SET);
+            }
+        }
     }
 };
 
@@ -83,25 +111,54 @@ const ArmStep DrawKFS_Below20cm[] = {
     //  Z目标, Z耗时 |  X目标, X耗时 |  R目标, R耗时
     {
         0.0f, 2.0f, 0.0f, 0.0f, M_PI / 2, 3.0f,
-        []() { HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET); }
+        [](uint8_t arm_id) { 
+            if (arm_id == 0) {
+                HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET);
+            }
+            else if (arm_id == 1) {
+                HAL_GPIO_WritePin(GPIOA,GPIO_PIN_2, GPIO_PIN_SET);
+            }
+        }
     }, // 步骤1
     {0.0f, 0.0f, 0.50f, 5.0f, M_PI / 2, 0.0f, nullptr}, // 步骤2
     {0.30f, 2.0f, 0.50f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤3
     {0.50f, 2.0f, 0.0f, 5.0f, M_PI / 2, 0.0f, nullptr}, // 步骤4
     {
-        0.50f, 2.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-        []() { HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET); }
+        0.50f, 2.0f, 0.0f, 0.0f, M_PI, 1.0f,
+        [](uint8_t arm_id) { 
+            if (arm_id == 0) {
+                HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET);
+            }
+            else if (arm_id == 1) {
+                HAL_GPIO_WritePin(GPIOA,GPIO_PIN_2, GPIO_PIN_SET);
+            }
+        }
     }
 };
 
 const ArmStep PutKFS_OrderTwo[] = {
     {0.70f,2.5f, 0.0f, 0.0f, M_PI / 2, 2.0f,
-    []{HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET);}},// 步骤1
+    [](uint8_t arm_id) { 
+        if (arm_id == 0) {
+            HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET);
+        }
+        else if (arm_id == 1) {
+            HAL_GPIO_WritePin(GPIOA,GPIO_PIN_2, GPIO_PIN_SET);
+        }
+    }},// 步骤1
     {1.0f,3.0f,0.0f,0.0f, M_PI / 2, 0.0f,nullptr},//步骤2
-    {1.0f,0.0f, 0.45f,5.0f, M_PI / 2, 0.0f,nullptr},//步骤3
+    {1.0f,0.0f,0.45f,5.0f, M_PI / 2, 0.0f,nullptr},//步骤3
     {1.0f,2.0f,0.45f,0.0f, M_PI / 2, 0.0f,
-    []{HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_RESET);}},//步骤4
-    {0.0f, 7.0f, 0.0f, 5.0f, 0.0f, 2.0f,}
+    [](uint8_t arm_id) { 
+        if (arm_id == 0) {
+            HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_RESET);
+        }
+        else if (arm_id == 1) {
+            HAL_GPIO_WritePin(GPIOA,GPIO_PIN_2, GPIO_PIN_RESET);
+        }
+    }},//步骤4
+    {1.0f, 8.0f, 0.45f, 8.0f, M_PI / 2, 8.0f, nullptr},//步骤5，等待8s
+    {0.0f, 7.0f, 0.0f, 5.0f, 0.0f, 2.0f, nullptr}//步骤6，回到初始位置
 };
 
 // const ArmStep PutKFS_OrderTwo[] = {
@@ -177,9 +234,9 @@ void DrawKFS_Task() {
     PlannedJoint Joint_R_R(Adapter_R_R, -M_PI,2*M_PI, 0, -1, 1, dt);
 
     // 实例化动作播放器
-    ArmSequencePlayer player_L(Joint_Z, Joint_X, Joint_R);
-    ArmSequencePlayer player_R(Joint_Z_R, Joint_X_R, Joint_R_R);
-    
+    ArmSequencePlayer player_L(0, Joint_Z, Joint_X, Joint_R);
+    ArmSequencePlayer player_R(1, Joint_Z_R, Joint_X_R, Joint_R_R);
+
     osDelay(2000);
     for (;;) {
         // ================== 左臂触发逻辑 ==================
