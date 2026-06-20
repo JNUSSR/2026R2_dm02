@@ -47,19 +47,19 @@ void ClimbingTask(void)
         climbingCtrl.AutoTask1ms();
         climbingCtrl.TaskEntry1ms();
 
-        // ------------------ 管控前腿激光 (huart10) ------------------
+        // ------------------ 管控前腿激光 (huart1) ------------------
         uint8_t current_laser_front = Climbing_Is_Finding_Edge_Front();
         if (current_laser_front != last_laser_front) {
-            if (current_laser_front == 1) UART_Reinit(&huart10); 
-            else HAL_UART_AbortReceive(&huart10); 
+            if (current_laser_front == 1) UART_Reinit(&huart1); 
+            else HAL_UART_AbortReceive(&huart1); 
             last_laser_front = current_laser_front; 
         }
 
-        // ------------------ 管控后腿激光 (huart1) ------------------
+        // ------------------ 管控后腿激光 (huart10) ------------------
         uint8_t current_laser_rear = Climbing_Is_Finding_Edge_Rear();
         if (current_laser_rear != last_laser_rear) {
-            if (current_laser_rear == 1) UART_Reinit(&huart1); 
-            else HAL_UART_AbortReceive(&huart1); 
+            if (current_laser_rear == 1) UART_Reinit(&huart10); 
+            else HAL_UART_AbortReceive(&huart10); 
             last_laser_rear = current_laser_rear; 
         }
         osDelay(1);

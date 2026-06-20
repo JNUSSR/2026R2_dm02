@@ -169,9 +169,8 @@ void MX_FREERTOS_Init(void) {
 /* USER CODE END Header_StartMAVLinkTask */
 void StartMAVLinkTask(void *argument)
 {
-  /* init code for USB_DEVICE */
-  UartTask();
   /* USER CODE BEGIN StartMAVLinkTask */
+  UartTask();
   /* Infinite loop */
   for(;;)
   {

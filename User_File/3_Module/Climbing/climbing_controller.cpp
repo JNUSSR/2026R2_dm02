@@ -1,4 +1,5 @@
 #include "climbing_controller.h"
+#include "dvc_motor_dji.h"
 #include "fdcan.h"
 #include "ChassisTask.h"   
 
@@ -101,15 +102,15 @@ void ClimbingController::Init(FDCAN_HandleTypeDef *hcan)
     slope_wheel_l_angle_.Init(WHEEL_SLOPE_STEP_UP, WHEEL_SLOPE_STEP_UP, Slope_First_REAL);
     slope_wheel_r_angle_.Init(WHEEL_SLOPE_STEP_UP, WHEEL_SLOPE_STEP_UP, Slope_First_REAL);
 
-    // 同步 R2_Z 当前测试完备的总线/ID 映射:
-    // 前腿: CAN2 / 0x206
-    // 后腿: CAN1 / 0x202
-    // 左轮: CAN1 / 0x203
-    // 右轮: CAN1 / 0x204
-    motor_lift_front_.Init(&hfdcan2, Motor_DJI_ID_0x206, Motor_DJI_Control_Method_ANGLE);
-    motor_lift_rear_.Init(&hfdcan1, Motor_DJI_ID_0x202, Motor_DJI_Control_Method_ANGLE);
-    motor_wheel_l_.Init(&hfdcan1, Motor_DJI_ID_0x203, Motor_DJI_Control_Method_ANGLE);
-    motor_wheel_r_.Init(&hfdcan1, Motor_DJI_ID_0x204, Motor_DJI_Control_Method_ANGLE);
+    // 总线/ID 映射:
+    // 前腿: CAN1 0x206
+    // 后腿: CAN3 0x204
+    // 左轮: CAN2 0x205
+    // 右轮: CAN2 0x206
+    motor_lift_front_.Init(&hfdcan1, Motor_DJI_ID_0x201, Motor_DJI_Control_Method_ANGLE);
+    motor_lift_rear_.Init(&hfdcan3, Motor_DJI_ID_0x204, Motor_DJI_Control_Method_ANGLE);
+    motor_wheel_l_.Init(&hfdcan2, Motor_DJI_ID_0x205, Motor_DJI_Control_Method_ANGLE);
+    motor_wheel_r_.Init(&hfdcan2, Motor_DJI_ID_0x206, Motor_DJI_Control_Method_ANGLE);
 
     motor_lift_front_.PID_Omega.Init(PID_FRONT_OMEGA_KP_NORMAL, 5.0f, 0.0f, 0.0f, 10000.0f, 12000.0f);
     motor_lift_front_.PID_Angle.Init(PID_FRONT_ANGLE_KP_NORMAL, 0.5f, 0.0f, 0.0f, 10000.0f, 12000.0f);

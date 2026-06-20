@@ -9,7 +9,7 @@ Laser Laser_Module;
 Laser Laser_Module_Front;
 Laser Laser_Module_Rear;
 
-// ---------------- 前腿激光 (UART10) ----------------
+// ---------------- 前腿激光 (UART1) ----------------
 static void Laser_Rx_Push_Front(const uint8_t *buffer, uint16_t length)
 {
     static uint8_t acc[64] = {0};
@@ -24,7 +24,7 @@ static void Laser_Rx_Push_Front(const uint8_t *buffer, uint16_t length)
 
        if (acc_len >= 2 && acc[acc_len - 2] == 0x0D && acc[acc_len - 1] == 0x0A) {
             // 只有解析成功 (返回1) 时，才去给底盘送数据
-            if (Laser_Module.Data_Process(acc, acc_len, &Laser_Module.Data) == 1) 
+            if (Laser_Module_Front.Data_Process(acc, acc_len, &Laser_Module_Front.Data) == 1) 
             {             
                 //实时喂给底盘控制器的寻崖系统
                 Climbing_Get_Controller().UpdateLaserDistance(Laser_Module_Front.Data.distance);
@@ -37,7 +37,7 @@ void UART_Laser_Callback(uint8_t *Buffer, uint16_t Length) {
     Laser_Rx_Push_Front(Buffer, Length);
 }
 
-// ---------------- 后腿激光 (UART1) ----------------
+// ---------------- 后腿激光 (UART10) ----------------
 static void Laser_Rx_Push_Rear(const uint8_t *buffer, uint16_t length)
 {
     // ⚠️ 必须用独立的 static 变量，防止和前激光中断打架
@@ -63,6 +63,6 @@ void UART_Laser_Rear_Callback(uint8_t *Buffer, uint16_t Length) {
 
 void LaserTask_Init(void)
 {
-    UART_Init(&huart10, UART_Laser_Callback);       // 绑定前腿激光
-    UART_Init(&huart1, UART_Laser_Rear_Callback);   // 绑定后腿激光
+    UART_Init(&huart1, UART_Laser_Callback);       // 绑定前腿激光
+    UART_Init(&huart10, UART_Laser_Rear_Callback);   // 绑定后腿激光
 }

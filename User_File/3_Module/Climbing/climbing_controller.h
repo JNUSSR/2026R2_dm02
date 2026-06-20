@@ -19,7 +19,7 @@
 #define movingmm(x_mm)       TURNS_TO_RADS((x_mm) / SCREW_LEAD_MM_PER_TURN)
 
 // 前/后腿方向修正（-1.0f 反向）
-#define FRONT_LEG_DIR        (-1.0f)
+#define FRONT_LEG_DIR        (1.0f)
 #define REAR_LEG_DIR         (1.0f)
 #define movingmm_front(x_mm) movingmm((x_mm) * FRONT_LEG_DIR)
 #define movingmm_rear(x_mm)  movingmm((x_mm) * REAR_LEG_DIR)
@@ -240,10 +240,6 @@ private:
     uint8_t laser_debounce_cnt_rear_;
 
     // --- 执行器与规划器 ---
-    Class_Motor_DJI_C620 motor_lift_front_;
-    Class_Motor_DJI_C620 motor_lift_rear_;
-    Class_Motor_DJI_C620 motor_wheel_l_;
-    Class_Motor_DJI_C620 motor_wheel_r_;
     QuinticPlanner planner_front_pos_{0.0f};
     QuinticPlanner planner_rear_pos_{0.0f};
     Class_Slope slope_wheel_l_angle_;
@@ -284,6 +280,12 @@ public:
     void TaskEntry1ms(void);
     void AutoTask1ms(void);
     void CAN_RxCallback(uint32_t std_id, uint8_t *data);
+
+    // 执行器
+    Class_Motor_DJI_C620 motor_lift_front_;
+    Class_Motor_DJI_C620 motor_lift_rear_;
+    Class_Motor_DJI_C620 motor_wheel_l_;
+    Class_Motor_DJI_C620 motor_wheel_r_;
 
     // --- 对外公开接口 (保留完整功能) ---
     void AutoStart(void);

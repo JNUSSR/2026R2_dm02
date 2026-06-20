@@ -6,8 +6,8 @@
 #include "dvc_motor_dji_leso.h"
 #include "arm.h"
 
-#define CLAMPING_MOTOR_CAN_ID           Motor_DJI_ID_0x207
-#define CLAMPING_MOTOR_STD_ID           (0x207U)
+#define CLAMPING_MOTOR_CAN_ID           Motor_DJI_ID_0x202
+#define CLAMPING_MOTOR_STD_ID           (0x202U)
 #define CLAMPING_TARGET_ANGLE_CLAMP_RAD (-PI / 2.0f)
 #define CLAMPING_TARGET_ANGLE_DOCK_RAD  (-PI * 0.95f)
 #define CLAMPING_TARGET_ANGLE_RESET_RAD (0.0f)

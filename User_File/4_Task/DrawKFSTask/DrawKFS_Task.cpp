@@ -132,7 +132,7 @@ void DrawKFS_Task() {
     // ----------------- 左臂初始化 -----------------
     Motor_Z.PID_Omega.Init(1500.0f, 600.0f, 0.0f, 0.0f, 3000.0f, 8000.0f);
     Motor_Z.PID_Angle.Init(20.0f, 0.0f, 0.0f, 0.0f, 10.0f, 15.0f);
-    Motor_Z.Init(&hfdcan2, Motor_DJI_ID_0x205, Motor_DJI_Control_Method_ANGLE);
+    Motor_Z.Init(&hfdcan1, Motor_DJI_ID_0x205, Motor_DJI_Control_Method_ANGLE);
 
     // 同步 R2_Z: DrawKFS 的 X/R 在 CAN1 的 0x206/0x207
     Motor_X.PID_Omega.Init(1000.0f, 200.0f, 0.0f, 0.0f, 2000.0f, 4000.0f);
@@ -240,6 +240,10 @@ void DrawKFS_Task() {
         Motor_Z.TIM_Calculate_PeriodElapsedCallback();
         Motor_X.TIM_Calculate_PeriodElapsedCallback();
         Motor_R.TIM_Calculate_PeriodElapsedCallback();
+
+        Motor_Z_R.TIM_Calculate_PeriodElapsedCallback();
+        Motor_X_R.TIM_Calculate_PeriodElapsedCallback();
+        Motor_R_R.TIM_Calculate_PeriodElapsedCallback();
         osDelay(1);
     }
 }

@@ -24,7 +24,7 @@ void Clamping_CAN_Rx_Dispatch(FDCAN_RxHeaderTypeDef &Header, uint8_t *Buffer)
 void ClampingTask(void)
 
 {
-    clampingCtrl.Init(&hfdcan2);
+    clampingCtrl.Init(&hfdcan1);
 
     osDelay(3000); // 等待系统稳定
     Clamping_Auto_Adjust(); // 夹爪举到水平（夹取）角度，夹爪释放

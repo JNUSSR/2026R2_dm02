@@ -26,6 +26,7 @@
 #include "1_Middleware/System/Timestamp/sys_timestamp.h"
 #include "1_Middleware/Driver/Uart_printf/uart_printf.h"
 #include "3_Module/arm/arm.h"
+#include "3_Module/Climbing/climbing_controller.h"
 
 /* Private macros ------------------------------------------------------------*/
 
@@ -67,24 +68,30 @@ void Task1s_Callback()
 
 // extern "C" void Chassis_CAN_Rx_Dispatch(FDCAN_HandleTypeDef *hcan, Struct_CAN_Rx_Buffer *Rx_Buffer);
 
+//Climbing
+extern ClimbingController climbingCtrl;
+
+// ARM电机
 extern Class_Motor_DJI_C620 Motor_Z;
 extern Class_Motor_DJI_C610 Motor_X;
-extern Class_Motor_DJI_C610 Motor_R;
+extern Class_Motor_DJI_C620 Motor_R;
 
+extern Class_Motor_DJI_C620 Motor_Z_R;
+extern Class_Motor_DJI_C610 Motor_X_R;
+extern Class_Motor_DJI_C620 Motor_R_R;
+ 
 static void CAN1_Global_Call_Back(FDCAN_RxHeaderTypeDef &Header, uint8_t *Buffer) {
     switch (Header.Identifier) {
-        case (0x202): {
-            Climbing_CAN_Rx_Dispatch(Header, Buffer);
+        case (0x201): {
+            climbingCtrl.motor_lift_front_.CAN_RxCpltCallback();
             break;
         }
-        case (0x203): {
-            Climbing_CAN_Rx_Dispatch(Header, Buffer);
+        case (0x202):
+            Clamping_CAN_Rx_Dispatch(Header, Buffer);
             break;
-        }
-        case (0x204): {
-            Climbing_CAN_Rx_Dispatch(Header, Buffer);
+        case (0x205):
+            Motor_Z.CAN_RxCpltCallback();
             break;
-        }
         case (0x206):
             Motor_X.CAN_RxCpltCallback();
             break;
@@ -105,18 +112,32 @@ void CAN2_Global_Call_Back(FDCAN_RxHeaderTypeDef &Header, uint8_t *Buffer) {
             Chassis_CAN_Rx_Dispatch(&hfdcan2, Header, Buffer);
             break;
         case (0x205):
-            Motor_Z.CAN_RxCpltCallback();
-            break;
-        case (0x207):
-            Clamping_CAN_Rx_Dispatch(Header, Buffer);
+            climbingCtrl.motor_wheel_l_.CAN_RxCpltCallback();
             break;
         case (0x206):
-            Climbing_CAN_Rx_Dispatch(Header, Buffer);
+            climbingCtrl.motor_wheel_r_.CAN_RxCpltCallback();
             break;
     }
 }
 
-
+void CAN3_Global_Call_Back(FDCAN_RxHeaderTypeDef &Header, uint8_t *Buffer) {
+    switch (Header.Identifier) {
+        case (0x201):
+            Motor_Z_R.CAN_RxCpltCallback();
+            break;
+        case (0x202):
+            Motor_X_R.CAN_RxCpltCallback();
+            break;
+        case (0x203):
+            Motor_R_R.CAN_RxCpltCallback();
+            break;
+        case (0x204):
+            climbingCtrl.motor_lift_rear_.CAN_RxCpltCallback();
+            break;
+        default:
+            break;
+    }
+}
 
 
 /**
@@ -165,6 +186,7 @@ void Task_Init()
     // CAN_Init(&hfdcan1, CAN1_Callback);
     CAN_Init(&hfdcan1, CAN1_Global_Call_Back);
     CAN_Init(&hfdcan2, CAN2_Global_Call_Back);
+    CAN_Init(&hfdcan3, CAN3_Global_Call_Back); 
 
     // 电源相关ADC
     ADC_Init(&hadc1, 1);
@@ -181,7 +203,7 @@ void Task_Init()
 
 
     //在Task_Init中初始化Task_Clamping，解决了按复位按钮后电机无法正常运行的问题
-    clampingCtrl.Init(&hfdcan2);
+    clampingCtrl.Init(&hfdcan1);
 
     // 标记初始化完成
     init_finished = true;

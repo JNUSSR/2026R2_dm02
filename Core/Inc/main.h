@@ -77,8 +77,6 @@ void Error_Handler(void);
 #define SERVO_3__PWM_GPIO_Port GPIOA
 #define W25Q64_HOLD__OSPI_IO3_Pin GPIO_PIN_1
 #define W25Q64_HOLD__OSPI_IO3_GPIO_Port GPIOA
-#define SERVO_2__PWM_Pin GPIO_PIN_2
-#define SERVO_2__PWM_GPIO_Port GPIOA
 #define W25Q64_WP__OSPI_IO2_Pin GPIO_PIN_3
 #define W25Q64_WP__OSPI_IO2_GPIO_Port GPIOA
 #define WS2812_RX__SPI_MOSI_Pin GPIO_PIN_7

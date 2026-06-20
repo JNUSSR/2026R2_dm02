@@ -176,7 +176,7 @@ void TIM_1ms_CAN_PeriodElapsedCallback()
 
     // C610/C620 (M2006/M3508等) 控制帧
     CAN_Transmit_Data(&hfdcan1, 0x200, CAN1_0x200_Tx_Data, 8);
-    // GM6020新驱动控制帧
+
     CAN_Transmit_Data(&hfdcan1, 0x1ff, CAN1_0x1ff_Tx_Data, 8);
 
 
@@ -184,6 +184,10 @@ void TIM_1ms_CAN_PeriodElapsedCallback()
     CAN_Transmit_Data(&hfdcan2, 0x200, CAN2_0x200_Tx_Data, 8);
   
     CAN_Transmit_Data(&hfdcan2, 0x1ff, CAN2_0x1ff_Tx_Data, 8);
+
+    //新增CAN3的发送
+    CAN_Transmit_Data(&hfdcan3, 0x200, CAN3_0x200_Tx_Data, 8);
+    CAN_Transmit_Data(&hfdcan3, 0x1ff, CAN3_0x1ff_Tx_Data, 8);
 }
 
 /**
