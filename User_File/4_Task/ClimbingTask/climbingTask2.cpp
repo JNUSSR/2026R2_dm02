@@ -26,7 +26,7 @@ uint8_t Climbing_Is_Finding_Edge_Rear(void) { return climbingCtrl.IsFindingEdgeR
 void ClimbingTask(void)
 {
     // 任务入口里完成一次初始化
-    climbingCtrl.Init(&hfdcan1);
+    climbingCtrl.Init();
 
     // 初始化激光串口 
     LaserTask_Init();
@@ -71,7 +71,7 @@ void ClimbingTask(void)
 // -----------------------------------------
 void Climbing_Task_Init(void)
 {
-    climbingCtrl.Init(&hfdcan1);
+    climbingCtrl.Init();
 }
 
 void Climbing_Task_Entry(void)

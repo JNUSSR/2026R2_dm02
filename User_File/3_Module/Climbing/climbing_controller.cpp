@@ -93,9 +93,8 @@ ClimbingController::ClimbingController()
       laser_debounce_cnt_(0) {}             
     
 
-void ClimbingController::Init(FDCAN_HandleTypeDef *hcan)
+void ClimbingController::Init()
 {
-    (void) hcan;
 
     // 初始化顺序:
     // 1) 斜坡规划器 2) 电机对象 3) PID 参数 4) 运行状态变量

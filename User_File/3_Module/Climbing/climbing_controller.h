@@ -103,10 +103,10 @@
 // 轮子角度模式：距离->角度（rad）
 //上台阶
 #define WHEEL_RADIUS_M                MM_TO_M(50.0f)
-#define WHEEL_TRAVEL_UP_M             (0.63f)
+#define WHEEL_TRAVEL_UP_M             (0.61f)
 #define WHEEL_TRAVEL_UP_RAD           (WHEEL_TRAVEL_UP_M / WHEEL_RADIUS_M)
 //下台阶
-#define WHEEL_TRAVEL_DESCEND_M        (0.63f)
+#define WHEEL_TRAVEL_DESCEND_M        (0.61f)
 #define WHEEL_TRAVEL_DESCEND_RAD      (WHEEL_TRAVEL_DESCEND_M / WHEEL_RADIUS_M)
 //#define WHEEL_ANGLE_DONE_TOL_RAD      (0.25f) //轮子角度到位容忍度 即误差到某个值时认为轮子已经到位
 
@@ -276,7 +276,7 @@ public:
     uint8_t IsFindingEdgeFront(void) const;
     uint8_t IsFindingEdgeRear(void) const;
 
-    void Init(FDCAN_HandleTypeDef *hcan);
+    void Init(void);
     void TaskEntry1ms(void);
     void AutoTask1ms(void);
     void CAN_RxCallback(uint32_t std_id, uint8_t *data);
