@@ -224,12 +224,12 @@ void DrawKFS_Task() {
 
     float dt = 0.001;
     // 左臂关节
-    PlannedJoint Joint_Z(Adapter_Z, 0, 1.2, 0, -1, 0.5 * 1 / 0.017f, dt); //双倍抬升
+    PlannedJoint Joint_Z(Adapter_Z, 0, 1.2, 0, 1, 0.5 * 1 / 0.017f, dt); //双倍抬升
     PlannedJoint Joint_X(Adapter_X, -0.03, 0.6, 0, 1, 1 / 0.0165f, dt);
     PlannedJoint Joint_R(Adapter_R, -M_PI,2*M_PI, 0, -1, 1, dt);
 
     // 右臂关节
-    PlannedJoint Joint_Z_R(Adapter_Z_R, 0, 1.2, 0, -1, 0.5 * 1 / 0.017f, dt); 
+    PlannedJoint Joint_Z_R(Adapter_Z_R, 0, 1.2, 0, 1, 0.5 * 1 / 0.017f, dt); 
     PlannedJoint Joint_X_R(Adapter_X_R, -0.03, 0.6, 0, 1, 1 / 0.0165f, dt);
     PlannedJoint Joint_R_R(Adapter_R_R, -M_PI,2*M_PI, 0, -1, 1, dt);
 
