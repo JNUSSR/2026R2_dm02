@@ -77,7 +77,7 @@
 //下40cm台阶
 // 下台阶：状态3 触地目标
 #define DESCEND_FRONT_TOUCH_TARGET_40cm       movingmm_front(0.0f)
-#define DESCEND_REAR_TOUCH_TARGET_40cm        movingmm_rear(410.0f)
+#define DESCEND_REAR_TOUCH_TARGET_40cm        movingmm_rear(400.0f)
 
 // 下台阶：状态4 全局下降目标
 #define DESCEND_FRONT_GLOBAL_DOWN_TARGET_40cm movingmm_front(50.0f)
