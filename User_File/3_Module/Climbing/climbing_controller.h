@@ -41,21 +41,21 @@
 #define POS_FRONT_TOUCH_20cm      movingmm_front(-200.0f) //-200
 #define POS_REAR_TOUCH_20cm       movingmm_rear(0.0f)     //0.0
 
-#define POS_FRONT_LIFT_20cm       movingmm_front(20.0f) //20
-#define POS_REAR_LIFT_20cm        movingmm_rear(220.0f) //220
+#define POS_FRONT_LIFT_20cm       movingmm_front(40.0f) //20
+#define POS_REAR_LIFT_20cm        movingmm_rear(240.0f) //220
 
 #define POS_FRONT_FINAL_20cm      movingmm_front(-220.0f)
 #define POS_REAR_FINAL_20cm       movingmm_rear(-80.0f)
 
 //上40cm台阶
 #define POS_FRONT_RETRACT_40cm    movingmm_front(-420.0f)
-#define POS_REAR_RETRACT_40cm     movingmm_rear(-75.0f)
+#define POS_REAR_RETRACT_40cm     movingmm_rear(-80.0f)
 
 #define POS_FRONT_TOUCH_40cm      movingmm_front(-400.0f)
 #define POS_REAR_TOUCH_40cm       movingmm_rear(0.0f)
 
 #define POS_FRONT_LIFT_40cm       movingmm_front(20.0f)
-#define POS_REAR_LIFT_40cm        movingmm_rear(413.0f)
+#define POS_REAR_LIFT_40cm        movingmm_rear(420.0f)
 
 #define POS_FRONT_FINAL_40cm movingmm_front(-220.0f)
 #define POS_REAR_FINAL_40cm  movingmm_rear(-80.0f)
@@ -80,8 +80,8 @@
 #define DESCEND_REAR_TOUCH_TARGET_40cm        movingmm_rear(400.0f)
 
 // 下台阶：状态4 全局下降目标
-#define DESCEND_FRONT_GLOBAL_DOWN_TARGET_40cm movingmm_front(40.0f)
-#define DESCEND_REAR_GLOBAL_DOWN_TARGET_40cm  movingmm_rear(440.0f)
+#define DESCEND_FRONT_GLOBAL_DOWN_TARGET_40cm movingmm_front(50.0f)
+#define DESCEND_REAR_GLOBAL_DOWN_TARGET_40cm  movingmm_rear(450.0f)
 
 // 下台阶：状态6 抬起过渡目标
 // 前脚保持下层地面接触，后脚保持上层台阶对应高度
@@ -110,9 +110,12 @@
 #define WHEEL_TRAVEL_DESCEND_RAD      (WHEEL_TRAVEL_DESCEND_M / WHEEL_RADIUS_M)
 //#define WHEEL_ANGLE_DONE_TOL_RAD      (0.25f) //轮子角度到位容忍度 即误差到某个值时认为轮子已经到位
 
+#define WHEEL_TRAVEL_DESCEND_40M        (0.63f)
+#define WHEEL_TRAVEL_DESCEND_RAD_40M    (WHEEL_TRAVEL_DESCEND_M / WHEEL_RADIUS_M)
+
 // 轮子角度斜坡
-#define WHEEL_SLOPE_RPM_UP            (90.0f) //up
-#define WHEEL_SLOPE_RPM_DESCEND       (80.0f) //descend
+#define WHEEL_SLOPE_RPM_UP            (105.0f) //up
+#define WHEEL_SLOPE_RPM_DESCEND       (90.0f) //descend
 #define WHEEL_SLOPE_STEP_UP           (RC_RPM_TO_RADPS(WHEEL_SLOPE_RPM_UP) / TASK_FREQ_HZ)
 #define WHEEL_SLOPE_STEP_DESCEND      (RC_RPM_TO_RADPS(WHEEL_SLOPE_RPM_DESCEND) / TASK_FREQ_HZ)
 
@@ -141,17 +144,17 @@
 // --- 上台阶时间参数 ---
 #define TIME_SETUP           1500  // 给2秒让它缩腿
 #define TIME_CHASSIS_APPROACH 800  // 底盘向前微调贴紧台阶的时间 (0.8s)
-#define TIME_TOUCH           500  // 触地时间
-#define TIME_LIFT            1500  // 顶升时间
+#define TIME_TOUCH           400  // 触地时间
+#define TIME_LIFT            1000  // 顶升时间
 #define TIME_LIFT_REAR_DELAY 100   // 顶升阶段后脚延时启动
-#define TIME_DRIVE           1800  // 平移时间
+#define TIME_DRIVE           1300  // 平移时间
 #define TIME_RETRACT         1000  // 收腿时间
 
 // --- 下台阶时间参数 ---
 #define TIME_DESC_SETUP      1500
-#define TIME_DESC_TOUCH      1500  // 下台阶：状态3 触地时间
-#define TIME_DESC_GLOBAL_DOWN  1000 // 下台阶：状态4 全局下降时间
-#define DESCEND_DRIVE_TIME_MS  2000 // 下台阶：状态5 平移时间
+#define TIME_DESC_TOUCH      1200  // 下台阶：状态3 触地时间
+#define TIME_DESC_GLOBAL_DOWN  500 // 下台阶：状态4 全局下降时间
+#define DESCEND_DRIVE_TIME_MS  1500 // 下台阶：状态5 平移时间
 #define TIME_DESC_RAISE      2000 // 下台阶：状态6 抬升时间
 
 //夹武器头对应时间参数

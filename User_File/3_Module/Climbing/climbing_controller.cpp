@@ -22,15 +22,14 @@ static const ActionFrame_t Seq_Up40cm[] = {
     { STEP_SETUP, POS_FRONT_RETRACT_40cm, POS_REAR_RETRACT_40cm, 0.0f, TIME_SETUP, 0, 0, WHEEL_MODE_ANGLE, 0 },
     { STEP_CHASSIS_APPROACH, POS_FRONT_RETRACT_40cm, POS_REAR_RETRACT_40cm, 0.0f, TIME_CHASSIS_APPROACH, 0, 0, WHEEL_MODE_CHASSIS_APPROACH, 0 },
     { STEP_TOUCH_DOWN, POS_FRONT_TOUCH_40cm, POS_REAR_TOUCH_40cm, 0.0f, TIME_TOUCH, 0, 0, WHEEL_MODE_ANGLE, 0 },
-    { STEP_GLOBAL_LIFT, POS_FRONT_LIFT_40cm, POS_REAR_LIFT_40cm, 0.0f, 3000, TIME_LIFT_REAR_DELAY, 1, WHEEL_MODE_CREEP, 0 },
-    { STEP_DRIVE_FWD, POS_FRONT_LIFT_40cm, POS_REAR_LIFT_40cm, WHEEL_TRAVEL_UP_RAD, TIME_DRIVE, 0, 1, WHEEL_MODE_ANGLE, 0 },
-    { STEP_RETRACT, POS_FRONT_FINAL_40cm, POS_REAR_FINAL_40cm, 0.0f, TIME_RETRACT, 0, 0, WHEEL_MODE_ANGLE, 0 }
+    { STEP_GLOBAL_LIFT, POS_FRONT_LIFT_40cm, POS_REAR_LIFT_40cm, 0.0f, 2000, 100, 1, WHEEL_MODE_CREEP, 0 },
+    { STEP_DRIVE_FWD, POS_FRONT_LIFT_40cm, POS_REAR_LIFT_40cm, WHEEL_TRAVEL_UP_RAD, 1800, 0, 1, WHEEL_MODE_ANGLE, 0 },
+    { STEP_RETRACT, POS_FRONT_FINAL_40cm, POS_REAR_FINAL_40cm, 0.0f, 1800, 0, 0, WHEEL_MODE_ANGLE, 0 }
 };
 
 // 剧本 3: 下台阶流程 
 static const ActionFrame_t Seq_Descend[] = {
     { STEP_DESCEND_FIND_EDGE, POS_FRONT_Init, POS_REAR_Init, 0.0f, TIME_FIND_EDGE_TIMEOUT, 0, 0, WHEEL_MODE_FIND_EDGE, 1 },
-    { STEP_DESCEND_SETUP, POS_FRONT_Init, POS_REAR_Init, 0.0f, TIME_DESC_SETUP, 0, 0, WHEEL_MODE_ANGLE, 1 },
     { STEP_DESCEND_TOUCH, DESCEND_FRONT_TOUCH_TARGET, DESCEND_REAR_TOUCH_TARGET, 0.0f, TIME_DESC_TOUCH, 0, 1, WHEEL_MODE_ANGLE, 1 },
     { STEP_DESCEND_GLOBAL_DOWN, DESCEND_FRONT_GLOBAL_DOWN_TARGET, DESCEND_REAR_GLOBAL_DOWN_TARGET, 0.0f, TIME_DESC_GLOBAL_DOWN, 0, 1, WHEEL_MODE_ANGLE, 1 },
     { STEP_DESCEND_DRIVE, DESCEND_FRONT_GLOBAL_DOWN_TARGET, DESCEND_REAR_GLOBAL_DOWN_TARGET, WHEEL_TRAVEL_DESCEND_RAD, DESCEND_DRIVE_TIME_MS, 0, 1, WHEEL_MODE_ANGLE, 1 },
@@ -44,11 +43,11 @@ static const ActionFrame_t Seq_Descend40cm[] = {
     { STEP_DESCEND_SETUP, POS_FRONT_Init, POS_REAR_Init, 
           0.0f, TIME_DESC_SETUP, 0, 0, WHEEL_MODE_ANGLE, 1 },
     { STEP_DESCEND_TOUCH, DESCEND_FRONT_TOUCH_TARGET_40cm, DESCEND_REAR_TOUCH_TARGET_40cm, 
-          0.0f, TIME_DESC_TOUCH, 0, 1, WHEEL_MODE_ANGLE, 1 },
+          0.0f, 3000, 0, 1, WHEEL_MODE_ANGLE, 1 },
     { STEP_DESCEND_GLOBAL_DOWN, DESCEND_FRONT_GLOBAL_DOWN_TARGET_40cm, DESCEND_REAR_GLOBAL_DOWN_TARGET_40cm, 
           0.0f, TIME_DESC_GLOBAL_DOWN, 0, 1, WHEEL_MODE_ANGLE, 1 },
     { STEP_DESCEND_DRIVE, DESCEND_FRONT_GLOBAL_DOWN_TARGET_40cm, DESCEND_REAR_GLOBAL_DOWN_TARGET_40cm, 
-          -WHEEL_TRAVEL_DESCEND_RAD, DESCEND_DRIVE_TIME_MS, 0, 1, WHEEL_MODE_ANGLE, 1 },
+          -WHEEL_TRAVEL_DESCEND_RAD_40M, 1800, 0, 1, WHEEL_MODE_ANGLE, 1 },
     { STEP_DESCEND_RAISE, DESCEND_FRONT_RAISE_TARGET_40cm, DESCEND_REAR_RAISE_TARGET_40cm, 
           0.0f, 4000, 0, 1, WHEEL_MODE_ANGLE, 1 }
 };
@@ -219,8 +218,9 @@ void ClimbingController::AutoTask1ms(void)
 
     // 独立控制：如果当前帧需要接管底盘持续运动
     if (frame.wheel_mode == WHEEL_MODE_CHASSIS_APPROACH) {
-        Chassis_Set_Target(0.1f, 0.0f, 0.0f); 
+        Chassis_Set_Target(0.15f, 0.0f, 0.0f); 
     }
+
 
     // 独立控制：下台阶寻崖感知与防抖拦截
     if (frame.wheel_mode == WHEEL_MODE_FIND_EDGE) {
@@ -249,7 +249,7 @@ void ClimbingController::AutoTask1ms(void)
         
         if (laser_distance_rear_ > LASER_EDGE_THRESHOLD_40MM) {
             laser_debounce_cnt_rear_++;
-            if (laser_debounce_cnt_rear_ >= LASER_DEBOUNCE_MAX) {
+            if (laser_debounce_cnt_rear_ >= 65) {
                 Chassis_Set_Target(0.0f, 0.0f, 0.0f); // 瞬间死区钉住！
                 laser_debounce_cnt_rear_ = 0;              
                 current_step_++; 
@@ -415,8 +415,8 @@ void ClimbingController::AutoStartFromTouch20cm(void) { StartSequence(Seq_Up20cm
 void ClimbingController::AutoStartFromTouch40cm(void) { StartSequence(Seq_Up40cm, 6, 1); }
 
 //下20cm接口
-void ClimbingController::DescendAutoStart(void) { StartSequence(Seq_Descend, 6, 0); }
-void ClimbingController::DescendAutoStart20cm(void) { StartSequence(Seq_Descend, 6, 0); }
+void ClimbingController::DescendAutoStart(void) { StartSequence(Seq_Descend, 5, 0); }
+void ClimbingController::DescendAutoStart20cm(void) { StartSequence(Seq_Descend, 5, 0); }
 
 //下40cm接口
 void ClimbingController::DescendAutoStart40cm(void) { StartSequence(Seq_Descend40cm, 6, 0); }
