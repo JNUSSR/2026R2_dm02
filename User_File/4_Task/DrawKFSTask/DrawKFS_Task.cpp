@@ -29,28 +29,10 @@ const ArmStep IDLE[] = {
     {0.1f, 5.0f, 0.0f, 0.0f,M_PI / 2, 5.0f, nullptr}
 };
 
-// 1
-// const ArmStep DrawKFS[] = {
-//     //  Z目标, Z耗时 |  X目标, X耗时 |  R目标, R耗时
-//     {
-//         0.15f, 2.5f, 0.0f, 0.0f, 0.0, 0.0f,
-//         []() { HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET); }
-//     }, // 步骤1
-//     {0.15f, 0.0f, 0.45f, 5.0f, M_PI / 2, 5.0f, nullptr}, // 步骤2
-//     {0.20f, 2.0f, 0.45f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤3
-//     {0.20f, 0.0f, 0.0f, 5.0f, M_PI / 2, 0.0f, nullptr}, // 步骤4
-//     {0.20f, 0.0f, 0.0f, 0.0f, M_PI * 1.5f, 0.09f, nullptr}, // 步骤5
-//     {0.20f, 2.0f, 0.0f, 0.0f, M_PI *1.5f, 0.0f, nullptr}, // 步骤6
-//     {
-//         0.0f, 3.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-//         []() { HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_RESET); }
-//     }
-// };
-
 const ArmStep DrawKFS[] = {
     //  Z目标, Z耗时 |  X目标, X耗时 |  R目标, R耗时
     {
-        0.15f, 2.5f, 0.0f, 0.0f, 0.0, 0.0f,
+        0.15f, 1.5f, 0.0f, 0.0f, 0.0, 0.0f,
         [](uint8_t arm_id) { 
             if (arm_id == 0) {
                 HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET);
@@ -60,12 +42,12 @@ const ArmStep DrawKFS[] = {
             }
         }
     }, // 步骤1
-    {0.15f, 0.0f, 0.50f, 5.0f, M_PI / 2, 5.0f, nullptr}, // 步骤2
-    {0.20f, 2.0f, 0.50f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤3
-    {0.20f, 0.0f, 0.0f, 5.0f, M_PI / 2, 0.0f, nullptr}, // 步骤4
-    {0.50f, 4.0f, 0.0f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤5
+    {0.15f, 0.0f, 0.50f, 4.0f, M_PI / 2, 3.0f, nullptr}, // 步骤2
+    {0.20f, 1.0f, 0.50f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤3
+    {0.20f, 0.0f, 0.0f, 4.0f, M_PI / 2, 0.0f, nullptr}, // 步骤4
+    {0.50f, 2.0f, 0.0f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤5
     {
-    0.50f, 3.0f, 0.0f, 0.0f, M_PI, 1.0f,
+    0.50f, 1.0f, 0.0f, 0.0f, M_PI, 1.0f,
         [](uint8_t arm_id) { 
             if (arm_id == 0) {
                 HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET);
@@ -80,7 +62,7 @@ const ArmStep DrawKFS[] = {
 const ArmStep DrawKFS_40cm[] = {
     //  Z目标, Z耗时 |  X目标, X耗时 |  R目标, R耗时
     {
-        0.35f, 5.0f, 0.0f, 0.0f, 0, 0.0f,
+        0.35f, 2.5f, 0.0f, 0.0f, 0, 0.0f,
         [](uint8_t arm_id) { 
             if (arm_id == 0) {
                 HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET);
@@ -90,12 +72,12 @@ const ArmStep DrawKFS_40cm[] = {
             }
         }
     }, // 步骤1
-    {0.35f, 0.0f, 0.50f, 5.0f, M_PI / 2, 5.0f, nullptr}, // 步骤2
+    {0.35f, 0.0f, 0.50f, 4.0f, M_PI / 2, 5.0f, nullptr}, // 步骤2
     {0.40f, 5.0f, 0.50f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤3
-    {0.40f, 0.0f, 0.0f, 5.0f, M_PI / 2, 0.0f, nullptr}, // 步骤4
+    {0.40f, 0.0f, 0.0f, 4.0f, M_PI / 2, 0.0f, nullptr}, // 步骤4
     {0.50f, 2.0f, 0.0f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤5
     {
-        0.50f, 2.0f, 0.0f, 0.0f, M_PI, 1.0f,
+        0.50f, 1.0f, 0.0f, 0.0f, M_PI, 1.0f,
         [](uint8_t arm_id) { 
             if (arm_id == 0) {
                 HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET);
@@ -120,11 +102,11 @@ const ArmStep DrawKFS_Below20cm[] = {
             }
         }
     }, // 步骤1
-    {0.0f, 0.0f, 0.50f, 5.0f, M_PI / 2, 0.0f, nullptr}, // 步骤2
+    {0.0f, 0.0f, 0.50f, 4.0f, M_PI / 2, 0.0f, nullptr}, // 步骤2
     {0.30f, 2.0f, 0.50f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤3
-    {0.50f, 2.0f, 0.0f, 5.0f, M_PI / 2, 0.0f, nullptr}, // 步骤4
+    {0.50f, 2.0f, 0.0f, 4.0f, M_PI / 2, 0.0f, nullptr}, // 步骤4
     {
-        0.50f, 2.0f, 0.0f, 0.0f, M_PI, 1.0f,
+        0.50f, 1.0f, 0.0f, 0.0f, M_PI, 1.0f,
         [](uint8_t arm_id) { 
             if (arm_id == 0) {
                 HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET);
@@ -137,7 +119,7 @@ const ArmStep DrawKFS_Below20cm[] = {
 };
 
 const ArmStep PutKFS_OrderTwo[] = {
-    {0.70f,2.5f, 0.0f, 0.0f, M_PI / 2, 2.0f,
+    {0.70f,2.5f, 0.0f, 0.0f, M_PI / 2 * 1.05, 2.0f,
     [](uint8_t arm_id) { 
         if (arm_id == 0) {
             HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET);
@@ -146,9 +128,9 @@ const ArmStep PutKFS_OrderTwo[] = {
             HAL_GPIO_WritePin(GPIOA,GPIO_PIN_2, GPIO_PIN_SET);
         }
     }},// 步骤1
-    {1.0f,3.0f,0.0f,0.0f, M_PI / 2, 0.0f,nullptr},//步骤2
-    {1.0f,0.0f,0.45f,5.0f, M_PI / 2, 0.0f,nullptr},//步骤3
-    {1.0f,2.0f,0.45f,0.0f, M_PI / 2, 0.0f,
+    {1.0f,2.0f,0.0f,0.0f, M_PI / 2 * 1.05, 0.0f,nullptr},//步骤2
+    {1.0f,0.0f,0.50f,4.0f, M_PI / 2 * 1.05, 0.0f,nullptr},//步骤3
+    {1.0f,2.0f,0.50f,2.0f, M_PI / 2, 0.2f,
     [](uint8_t arm_id) { 
         if (arm_id == 0) {
             HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_RESET);
@@ -157,19 +139,9 @@ const ArmStep PutKFS_OrderTwo[] = {
             HAL_GPIO_WritePin(GPIOA,GPIO_PIN_2, GPIO_PIN_RESET);
         }
     }},//步骤4
-    {1.0f, 8.0f, 0.45f, 8.0f, M_PI / 2, 8.0f, nullptr},//步骤5，等待8s
-    {0.0f, 7.0f, 0.0f, 5.0f, 0.0f, 2.0f, nullptr}//步骤6，回到初始位置
+    {1.0f, 3.0f, 0.45f, 3.0f, M_PI / 2, 3.0f, nullptr},//步骤5，等待3s
+    {0.0f, 5.0f, 0.0f, 5.0f, 0.0f, 2.0f, nullptr}//步骤6，回到初始位置
 };
-
-// const ArmStep PutKFS_OrderTwo[] = {
-//     {0.70f,2.5f, 0.0f, 0.5f, 0, 2.0f,nullptr},// 步骤1
-//     {1.0f,7.0f,0.0f,0.0f, M_PI / 2, 3.0f,
-//     []{HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET);}},//步骤2
-//     {1.0f,0.0f, 0.45f,5.0f, M_PI / 2, 0.0f,nullptr},//步骤3
-//     {1.0f,2.0f,0.45f,0.0f, M_PI / 2, 0.0f,
-//     []{HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_RESET);}},//步骤4
-//     {0.0f, 7.0f, 0.0f, 5.0f, 0.0f, 2.0f,}
-// };
 
 // ================= 左臂 Flags =================
 bool drawkfs_flag = false;
@@ -224,12 +196,12 @@ void DrawKFS_Task() {
 
     float dt = 0.001;
     // 左臂关节
-    PlannedJoint Joint_Z(Adapter_Z, 0, 1.2, 0, 1, 0.5 * 1 / 0.017f, dt); //双倍抬升
+    PlannedJoint Joint_Z(Adapter_Z, 0, 1.1, 0, 1, 0.5 * 1 / 0.017f, dt); //双倍抬升
     PlannedJoint Joint_X(Adapter_X, -0.03, 0.6, 0, 1, 1 / 0.0165f, dt);
     PlannedJoint Joint_R(Adapter_R, -M_PI,2*M_PI, 0, -1, 1, dt);
 
     // 右臂关节
-    PlannedJoint Joint_Z_R(Adapter_Z_R, 0, 1.2, 0, 1, 0.5 * 1 / 0.017f, dt); 
+    PlannedJoint Joint_Z_R(Adapter_Z_R, 0, 1.1, 0, 1, 0.5 * 1 / 0.017f, dt); 
     PlannedJoint Joint_X_R(Adapter_X_R, -0.03, 0.6, 0, 1, 1 / 0.0165f, dt);
     PlannedJoint Joint_R_R(Adapter_R_R, -M_PI,2*M_PI, 0, -1, 1, dt);
 
