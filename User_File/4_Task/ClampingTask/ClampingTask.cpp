@@ -60,13 +60,13 @@ void Clamping_Auto_Start(void)
     // 执行夹取动作
     clampingCtrl.OpenSolenoid();
     osDelay(1000);
+    // 移动到垂直（对接）位置
+    Clamping_Get_Controller().MoveToDockAngle();
+    osDelay(500);
     // 后退一段固定距离（-0.2m/s*1.5s=-30cm）
     Chassis_Set_Target(-0.2f,0.0f,0.0f);
     osDelay(1500);
     Chassis_Set_Target(0.0f,0.0f,0.0f);
-    osDelay(500);
-    // 移动到垂直（对接）位置
-    Clamping_Get_Controller().MoveToDockAngle();
 
     Climbing_Init_Pose_Start();
 }

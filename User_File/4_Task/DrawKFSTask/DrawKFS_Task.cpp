@@ -32,7 +32,7 @@ const ArmStep IDLE[] = {
 const ArmStep DrawKFS[] = {
     //  Z目标, Z耗时 |  X目标, X耗时 |  R目标, R耗时
     {
-        0.15f, 1.5f, 0.0f, 0.0f, 0.0, 0.0f,
+        0.20f, 1.0f, 0.0f, 0.0f, 0.0, 0.0f,
         [](uint8_t arm_id) { 
             if (arm_id == 0) {
                 HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET);
@@ -42,12 +42,12 @@ const ArmStep DrawKFS[] = {
             }
         }
     }, // 步骤1
-    {0.15f, 0.0f, 0.50f, 4.0f, M_PI / 2, 3.0f, nullptr}, // 步骤2
-    {0.20f, 1.0f, 0.50f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤3
+    {0.20f, 0.0f, 0.55f, 2.5f, M_PI / 2, 1.0f, nullptr}, // 步骤2
+    {0.20f, 0.0f, 0.55f, 1.0f, M_PI / 2, 0.0f, nullptr}, // 步骤3，等待1s吸取
     {0.20f, 0.0f, 0.0f, 4.0f, M_PI / 2, 0.0f, nullptr}, // 步骤4
-    {0.50f, 2.0f, 0.0f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤5
+    {0.50f, 1.5f, 0.0f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤5
     {
-    0.50f, 1.0f, 0.0f, 0.0f, M_PI, 1.0f,
+    0.50f, 0.0f, 0.0f, 0.0f, M_PI, 1.0f,
         [](uint8_t arm_id) { 
             if (arm_id == 0) {
                 HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET);
@@ -62,7 +62,7 @@ const ArmStep DrawKFS[] = {
 const ArmStep DrawKFS_40cm[] = {
     //  Z目标, Z耗时 |  X目标, X耗时 |  R目标, R耗时
     {
-        0.35f, 2.5f, 0.0f, 0.0f, 0, 0.0f,
+        0.40f, 2.5f, 0.0f, 0.0f, 0, 0.0f,
         [](uint8_t arm_id) { 
             if (arm_id == 0) {
                 HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET);
@@ -72,12 +72,12 @@ const ArmStep DrawKFS_40cm[] = {
             }
         }
     }, // 步骤1
-    {0.35f, 0.0f, 0.50f, 4.0f, M_PI / 2, 5.0f, nullptr}, // 步骤2
-    {0.40f, 5.0f, 0.50f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤3
+    {0.40f, 0.0f, 0.55f, 2.5f, M_PI / 2, 2.0f, nullptr}, // 步骤2
+    {0.40f, 0.0f, 0.55f, 1.0f, M_PI / 2, 0.0f, nullptr}, // 步骤3，等待1s吸取
     {0.40f, 0.0f, 0.0f, 4.0f, M_PI / 2, 0.0f, nullptr}, // 步骤4
     {0.50f, 2.0f, 0.0f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤5
     {
-        0.50f, 1.0f, 0.0f, 0.0f, M_PI, 1.0f,
+        0.50f, 0.0f, 0.0f, 0.0f, M_PI, 1.0f,
         [](uint8_t arm_id) { 
             if (arm_id == 0) {
                 HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET);
@@ -102,11 +102,11 @@ const ArmStep DrawKFS_Below20cm[] = {
             }
         }
     }, // 步骤1
-    {0.0f, 0.0f, 0.50f, 4.0f, M_PI / 2, 0.0f, nullptr}, // 步骤2
-    {0.30f, 2.0f, 0.50f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤3
-    {0.50f, 2.0f, 0.0f, 4.0f, M_PI / 2, 0.0f, nullptr}, // 步骤4
+    {0.0f, 0.0f, 0.55f, 2.5f, M_PI / 2, 0.0f, nullptr}, // 步骤2
+    {0.50f, 2.0f, 0.55f, 1.0f, M_PI / 2, 0.0f, nullptr}, // 步骤3，等待1s吸取
+    {0.50f, 2.0f, 0.0f, 2.5f, M_PI / 2, 0.0f, nullptr}, // 步骤4
     {
-        0.50f, 1.0f, 0.0f, 0.0f, M_PI, 1.0f,
+        0.50f, 0.0f, 0.0f, 0.0f, M_PI, 1.0f,
         [](uint8_t arm_id) { 
             if (arm_id == 0) {
                 HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET);
@@ -119,7 +119,7 @@ const ArmStep DrawKFS_Below20cm[] = {
 };
 
 const ArmStep PutKFS_OrderTwo[] = {
-    {0.70f,2.5f, 0.0f, 0.0f, M_PI / 2 * 1.05, 2.0f,
+    {0.70f,2.0f, 0.0f, 0.0f, M_PI / 2 * 1.05, 2.0f,
     [](uint8_t arm_id) { 
         if (arm_id == 0) {
             HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET);
@@ -129,8 +129,8 @@ const ArmStep PutKFS_OrderTwo[] = {
         }
     }},// 步骤1
     {1.0f,2.0f,0.0f,0.0f, M_PI / 2 * 1.05, 0.0f,nullptr},//步骤2
-    {1.0f,0.0f,0.50f,4.0f, M_PI / 2 * 1.05, 0.0f,nullptr},//步骤3
-    {1.0f,2.0f,0.50f,2.0f, M_PI / 2, 0.2f,
+    {1.0f,0.0f,0.50f,2.0f, M_PI / 2 * 1.05, 0.0f,nullptr},//步骤3
+    {1.0f,3.0f,0.50f,3.0f, M_PI / 2, 0.2f,
     [](uint8_t arm_id) { 
         if (arm_id == 0) {
             HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_RESET);
@@ -138,9 +138,8 @@ const ArmStep PutKFS_OrderTwo[] = {
         else if (arm_id == 1) {
             HAL_GPIO_WritePin(GPIOA,GPIO_PIN_2, GPIO_PIN_RESET);
         }
-    }},//步骤4
-    {1.0f, 3.0f, 0.45f, 3.0f, M_PI / 2, 3.0f, nullptr},//步骤5，等待3s
-    {0.0f, 5.0f, 0.0f, 5.0f, 0.0f, 2.0f, nullptr}//步骤6，回到初始位置
+    }},//步骤4，等待3s
+    {0.0f, 5.0f, 0.0f, 2.5f, 0.0f, 3.0f, nullptr}//步骤5，回到初始位置
 };
 
 // ================= 左臂 Flags =================
