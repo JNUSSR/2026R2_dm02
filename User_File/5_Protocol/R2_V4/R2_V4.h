@@ -10,7 +10,7 @@
     #error Wrong include order: MAVLINK_R2_V4.H MUST NOT BE DIRECTLY USED. Include mavlink.h from the same directory instead or set ALL AND EVERY defines from MAVLINK.H manually accordingly, including the #define MAVLINK_H call.
 #endif
 
-#define MAVLINK_R2_V4_XML_HASH 4332624987649227238
+#define MAVLINK_R2_V4_XML_HASH -6044280928783988624
 
 #ifdef __cplusplus
 extern "C" {
@@ -88,7 +88,8 @@ typedef enum CLAMPING_CMD_TYPE
    CLAMPING_CMD_MOVE_TO_DOCK=4, /* Raise to the docking position. | */
    CLAMPING_CMD_ADJUST=5, /* Adjust the chassis position for clamping. | */
    CLAMPING_CMD_START=6, /* Start the clamping process. | */
-   CLAMPING_CMD_TYPE_ENUM_END=7, /*  | */
+   CLAMPING_CMD_MOVE_TO_AIRTAG=7, /* Move to the air tag recognition position. | */
+   CLAMPING_CMD_TYPE_ENUM_END=8, /*  | */
 } CLAMPING_CMD_TYPE;
 #endif
 

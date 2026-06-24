@@ -135,6 +135,9 @@ void UartTask() {
                             case CLAMPING_CMD_START:
                                 Clamping_Auto_Start();
                                 break;
+                            case CLAMPING_CMD_MOVE_TO_AIRTAG:
+
+                                break;
                         }
                     }
                 }
