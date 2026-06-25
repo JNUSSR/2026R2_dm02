@@ -73,11 +73,6 @@ void ClampingController::MoveToDockAngle(void)
     PlanToAngle(CLAMPING_TARGET_ANGLE_DOCK_RAD);
 }
 
-void ClampingController::MoveToAirtag(void)
-{
-    PlanToAngle(CLAMPING_TARGET_ANGLE_AIRTAG_RAD);
-}
-
 void ClampingController::OpenSolenoid(void)
 {
     Cylinder1_Push();
