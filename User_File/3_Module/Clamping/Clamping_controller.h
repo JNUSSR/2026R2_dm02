@@ -8,9 +8,9 @@
 
 #define CLAMPING_MOTOR_CAN_ID               Motor_DJI_ID_0x202
 #define CLAMPING_MOTOR_STD_ID               (0x202U)
-#define CLAMPING_TARGET_ANGLE_AIRTAG_RAD    ((-PI / 4.0f) * 1.00f)
-#define CLAMPING_TARGET_ANGLE_CLAMP_RAD     ((-PI / 2.0f) * 1.05f)
-#define CLAMPING_TARGET_ANGLE_DOCK_RAD      ((-PI)        * 0.95f)
+#define CLAMPING_TARGET_ANGLE_AIRTAG_RAD    ((PI / 4.0f) * 1.00f)
+#define CLAMPING_TARGET_ANGLE_CLAMP_RAD     ((PI / 2.0f) * 1.05f)
+#define CLAMPING_TARGET_ANGLE_DOCK_RAD      ((PI)        * 0.95f)
 #define CLAMPING_TARGET_ANGLE_RESET_RAD     (0.0f)
 #define CLAMPING_PLAN_DT_S                  (0.001f)
 #define CLAMPING_MOVE_DURATION_S            (0.5f)

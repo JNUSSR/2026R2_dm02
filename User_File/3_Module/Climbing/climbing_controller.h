@@ -127,17 +127,17 @@
 #define WHEEL_CREEP_OMEGA_RADPS       (0.3f)
 
 // 动态PID参数（按工况切换）
-#define PID_FRONT_OMEGA_KP_NORMAL   (138.5f) //正常前轮P
-#define PID_FRONT_ANGLE_KP_NORMAL   (70.8f)
-#define PID_REAR_OMEGA_KP_NORMAL    (167.0f) //正常后轮P
-#define PID_REAR_ANGLE_KP_NORMAL    (85.0f)
+#define PID_FRONT_OMEGA_KP_NORMAL   (1500.5f) //正常前轮P
+#define PID_FRONT_ANGLE_KP_NORMAL   (15.8f)
+#define PID_REAR_OMEGA_KP_NORMAL    (1500.0f) //正常后轮P
+#define PID_REAR_ANGLE_KP_NORMAL    (15.0f)
 #define PID_REAR_OMEGA_KI_NORMAL    (10.0f) //正常后轮I
 #define PID_REAR_ANGLE_KI_NORMAL    (1.0f)
 
-#define PID_FRONT_OMEGA_KP_LIFT     (305.0f) //抬升前轮P
-#define PID_FRONT_ANGLE_KP_LIFT     (140.0f)
-#define PID_REAR_OMEGA_KP_LIFT      (345.0f) //抬升后轮P
-#define PID_REAR_ANGLE_KP_LIFT      (115.0f)
+#define PID_FRONT_OMEGA_KP_LIFT     (1800.0f) //抬升前轮P
+#define PID_FRONT_ANGLE_KP_LIFT     (15.0f)
+#define PID_REAR_OMEGA_KP_LIFT      (2000.0f) //抬升后轮P
+#define PID_REAR_ANGLE_KP_LIFT      (15.0f)
 #define PID_REAR_OMEGA_KI_LIFT      (10.0f) //抬升后轮I
 #define PID_REAR_ANGLE_KI_LIFT      (1.0f)
 
@@ -145,15 +145,15 @@
 #define TIME_SETUP           1500  // 给2秒让它缩腿
 #define TIME_CHASSIS_APPROACH 800  // 底盘向前微调贴紧台阶的时间 (0.8s)
 #define TIME_TOUCH           400  // 触地时间
-#define TIME_LIFT            1000  // 顶升时间
+#define TIME_LIFT            1200  // 顶升时间
 #define TIME_LIFT_REAR_DELAY 100   // 顶升阶段后脚延时启动
-#define TIME_DRIVE           1300  // 平移时间
+#define TIME_DRIVE           1400  // 平移时间
 #define TIME_RETRACT         1000  // 收腿时间
 
 // --- 下台阶时间参数 ---
 #define TIME_DESC_SETUP      1500
 #define TIME_DESC_TOUCH      1200  // 下台阶：状态3 触地时间
-#define TIME_DESC_GLOBAL_DOWN  500 // 下台阶：状态4 全局下降时间
+#define TIME_DESC_GLOBAL_DOWN  600 // 下台阶：状态4 全局下降时间
 #define DESCEND_DRIVE_TIME_MS  1500 // 下台阶：状态5 平移时间
 #define TIME_DESC_RAISE      2000 // 下台阶：状态6 抬升时间
 
