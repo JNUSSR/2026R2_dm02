@@ -127,14 +127,14 @@
 #define WHEEL_CREEP_OMEGA_RADPS       (0.3f)
 
 // 动态PID参数（按工况切换）
-#define PID_FRONT_OMEGA_KP_NORMAL   (1500.5f) //正常前轮P
+#define PID_FRONT_OMEGA_KP_NORMAL   (800.5f) //正常前轮P
 #define PID_FRONT_ANGLE_KP_NORMAL   (15.8f)
 #define PID_REAR_OMEGA_KP_NORMAL    (1500.0f) //正常后轮P
 #define PID_REAR_ANGLE_KP_NORMAL    (15.0f)
 #define PID_REAR_OMEGA_KI_NORMAL    (10.0f) //正常后轮I
 #define PID_REAR_ANGLE_KI_NORMAL    (1.0f)
 
-#define PID_FRONT_OMEGA_KP_LIFT     (1800.0f) //抬升前轮P
+#define PID_FRONT_OMEGA_KP_LIFT     (1000.0f) //抬升前轮P
 #define PID_FRONT_ANGLE_KP_LIFT     (15.0f)
 #define PID_REAR_OMEGA_KP_LIFT      (2000.0f) //抬升后轮P
 #define PID_REAR_ANGLE_KP_LIFT      (15.0f)
@@ -145,7 +145,7 @@
 #define TIME_SETUP           1500  // 给2秒让它缩腿
 #define TIME_CHASSIS_APPROACH 800  // 底盘向前微调贴紧台阶的时间 (0.8s)
 #define TIME_TOUCH           400  // 触地时间
-#define TIME_LIFT            1200  // 顶升时间
+#define TIME_LIFT            1500  // 顶升时间
 #define TIME_LIFT_REAR_DELAY 100   // 顶升阶段后脚延时启动
 #define TIME_DRIVE           1400  // 平移时间
 #define TIME_RETRACT         1000  // 收腿时间
@@ -163,7 +163,7 @@
 // 激光测距寻崖参数
 #define LASER_EDGE_THRESHOLD_20MM   620.0f  // 判定门限：激光返回大于 62cm (620mm) 视为踩空
 #define LASER_EDGE_THRESHOLD_40MM   820.0f  // 判定门限：激光返回大于 62cm (620mm) 视为踩空
-#define LASER_DEBOUNCE_MAX        50       // 防抖：连续 5ms 检测到大于门限才触发
+#define LASER_DEBOUNCE_MAX        45       // 防抖：连续 5ms 检测到大于门限才触发
 #define TIME_FIND_EDGE_TIMEOUT    8000    // 寻崖超时：最多往前开 8 秒，找不到就停机保护
 
 
