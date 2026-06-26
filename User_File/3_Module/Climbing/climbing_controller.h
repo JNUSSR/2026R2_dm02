@@ -92,9 +92,9 @@
 // 武器机构对接位置与时间参数
 // ==========================================
 // 夹武器头前腿位置 (请根据实际物理高度微调)
-#define POS_FRONT_WEAPON_HEAD    movingmm_front(-215.0f) 
+#define POS_FRONT_WEAPON_HEAD    movingmm_front(-195.0f) 
 // 对接武器杆前腿位置 (请根据实际物理高度微调)
-#define POS_FRONT_WEAPON_ROD     movingmm_front(-300.0f) 
+#define POS_FRONT_WEAPON_ROD     movingmm_front(0.0f) 
 
 // ==========================================
 // 2. 速度、斜坡、时间参数

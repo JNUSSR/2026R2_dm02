@@ -26,7 +26,7 @@ void ClampingTask(void)
 {
     clampingCtrl.Init(&hfdcan1);
 
-    osDelay(3000); // 等待系统稳定
+    osDelay(5000); // 等待系统稳定
     Clamping_Auto_Adjust(); // 夹爪举到水平（夹取）角度，夹爪释放
     for (;;)
     {
@@ -67,12 +67,15 @@ void Clamping_Auto_Start(void)
     Chassis_Set_Target(-0.2f,0.0f,0.0f);
     osDelay(1500);
     Chassis_Set_Target(0.0f,0.0f,0.0f);
+    // 放低到对接位置
+    Climbing_WeaponRodDockStart();
 
     Climbing_Init_Pose_Start();
 }
 
 void Clamping_Auto_Adjust(void)
 {
+    Climbing_WeaponHeadClampStart();
     clampingCtrl.MoveToClampAngle();
     clampingCtrl.ReleaseSolenoid();
 }
