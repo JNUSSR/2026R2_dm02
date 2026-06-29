@@ -123,7 +123,6 @@ int main(void)
   MX_SPI2_Init();
   MX_SPI6_Init();
   MX_IWDG1_Init();
-  MX_TIM2_Init();
   MX_TIM3_Init();
   MX_TIM5_Init();
   MX_TIM6_Init();

@@ -8,8 +8,8 @@ extern "C" {
 #endif
 
 // GPIO定义(气缸控制引脚)
-#define Cylinder_CYLINDER_GPIO_PORT1  GPIOE
-#define Cylinder_CYLINDER_GPIO_PIN1   GPIO_PIN_9
+#define Cylinder_CYLINDER_GPIO_PORT1  GPIOA
+#define Cylinder_CYLINDER_GPIO_PIN1   GPIO_PIN_0
 #define Cylinder_CYLINDER_GPIO_PORT2  GPIOE
 #define Cylinder_CYLINDER_GPIO_PIN2   GPIO_PIN_4
 #define Cylinder_CYLINDER_POWER_GPIO_PORT GPIOF//引脚供电控制，默认为常电，拉高供电

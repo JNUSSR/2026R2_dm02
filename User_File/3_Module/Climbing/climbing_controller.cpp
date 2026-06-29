@@ -110,10 +110,10 @@ void ClimbingController::Init()
     motor_wheel_l_.Init(&hfdcan2, Motor_DJI_ID_0x205, Motor_DJI_Control_Method_ANGLE);
     motor_wheel_r_.Init(&hfdcan2, Motor_DJI_ID_0x206, Motor_DJI_Control_Method_ANGLE);
 
-    motor_lift_front_.PID_Omega.Init(PID_FRONT_OMEGA_KP_NORMAL, 5.0f, 0.0f, 0.0f, 10000.0f, 12000.0f);
+    motor_lift_front_.PID_Omega.Init(PID_FRONT_OMEGA_KP_NORMAL, 50.0f, 0.0f, 0.0f, 10000.0f, 12000.0f);
     motor_lift_front_.PID_Angle.Init(PID_FRONT_ANGLE_KP_NORMAL, 0.5f, 0.0f, 0.0f, 10000.0f, 12000.0f);
 
-    motor_lift_rear_.PID_Omega.Init(PID_REAR_OMEGA_KP_NORMAL, 5.0f, 0.0f, 0.0f, 12000.0f, 14000.0f);
+    motor_lift_rear_.PID_Omega.Init(PID_REAR_OMEGA_KP_NORMAL, 50.0f, 0.0f, 0.0f, 12000.0f, 14000.0f);
     motor_lift_rear_.PID_Angle.Init(PID_REAR_ANGLE_KP_NORMAL, 0.5f, 0.0f, 0.0f, 12000.0f, 14000.0f);
 
     motor_wheel_l_.PID_Omega.Init(PID_WHEEL_OMEGA_KP, PID_WHEEL_OMEGA_KI, 0.0f, 0.0f, 10000.0f, 12000.0f);
@@ -224,7 +224,7 @@ void ClimbingController::AutoTask1ms(void)
 
     // 独立控制：下台阶寻崖感知与防抖拦截
     if (frame.wheel_mode == WHEEL_MODE_FIND_EDGE) {
-        Chassis_Set_Target(0.1f, 0.0f, 0.0f); // 给底盘下发微小前移速度
+        Chassis_Set_Target(0.2f, 0.0f, 0.0f); // 给底盘下发微小前移速度
         
         // 判定激光距离是否踩空
         if (laser_distance_ > LASER_EDGE_THRESHOLD_20MM) {

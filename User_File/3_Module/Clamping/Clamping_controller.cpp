@@ -35,7 +35,7 @@ void ClampingController::Init(FDCAN_HandleTypeDef *hcan)
         CLAMPING_LESO_ANGLE_KP,
         CLAMPING_LESO_ANGLE_KD
     );
-    motor_clamp_2006_.Set_Angle_Mode(Motor_DJI_LESO_Angle_Mode_MIX);
+    motor_clamp_2006_.Set_Angle_Mode(Motor_DJI_LESO_Angle_Mode_ORIGIN);
 
     motor_clamp_2006_.Init(hcan, CLAMPING_MOTOR_CAN_ID, Motor_DJI_Control_Method_ANGLE);
     motor_clamp_2006_.Set_Target_Angle(CLAMPING_TARGET_ANGLE_RESET_RAD);
@@ -71,6 +71,11 @@ void ClampingController::MoveToResetAngle(void)
 void ClampingController::MoveToDockAngle(void)
 {
     PlanToAngle(CLAMPING_TARGET_ANGLE_DOCK_RAD);
+}
+
+void ClampingController::MoveToAirtag(void)
+{
+    PlanToAngle(CLAMPING_TARGET_ANGLE_AIRTAG_RAD);
 }
 
 void ClampingController::OpenSolenoid(void)

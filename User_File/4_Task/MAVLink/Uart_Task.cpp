@@ -144,7 +144,7 @@ void UartTask() {
                                 Clamping_Auto_Start();
                                 break;
                             case CLAMPING_CMD_MOVE_TO_AIRTAG:
-
+                                Clamping_Get_Controller().MoveToAirtag();
                                 break;
                         }
                     }
