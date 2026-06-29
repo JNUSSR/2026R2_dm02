@@ -42,8 +42,8 @@ const ArmStep DrawKFS[] = {
             }
         }
     }, // 步骤1
-    {0.20f, 0.0f, 0.55f, 2.5f, M_PI / 2, 1.0f, nullptr}, // 步骤2
-    {0.20f, 0.0f, 0.55f, 1.0f, M_PI / 2, 0.0f, nullptr}, // 步骤3，等待1s吸取
+    {0.20f, 0.0f, 0.58f, 4.0f, M_PI / 2, 1.0f, nullptr}, // 步骤2
+    {0.20f, 0.0f, 0.58f, 1.0f, M_PI / 2, 0.0f, nullptr}, // 步骤3，等待1s吸取
     {0.20f, 0.0f, 0.0f, 4.0f, M_PI / 2, 0.0f, nullptr}, // 步骤4
     {0.50f, 1.5f, 0.0f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤5
     {
@@ -72,10 +72,10 @@ const ArmStep DrawKFS_40cm[] = {
             }
         }
     }, // 步骤1
-    {0.40f, 0.0f, 0.55f, 2.5f, M_PI / 2, 2.0f, nullptr}, // 步骤2
-    {0.40f, 0.0f, 0.55f, 1.0f, M_PI / 2, 0.0f, nullptr}, // 步骤3，等待1s吸取
-    {0.40f, 0.0f, 0.0f, 4.0f, M_PI / 2, 0.0f, nullptr}, // 步骤4
-    {0.50f, 2.0f, 0.0f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤5
+    {0.40f, 0.0f, 0.58f, 4.0f, M_PI / 2, 2.0f, nullptr}, // 步骤2
+    {0.40f, 0.0f, 0.58f, 1.0f, M_PI / 2, 0.0f, nullptr}, // 步骤3，等待1.5s吸取
+    {0.40f, 0.0f, 0.0f, 3.0f, M_PI / 2, 0.0f, nullptr}, // 步骤4
+    {0.50f, 1.0f, 0.0f, 0.0f, M_PI / 2, 0.0f, nullptr}, // 步骤5
     {
         0.50f, 0.0f, 0.0f, 0.0f, M_PI, 1.0f,
         [](uint8_t arm_id) { 
@@ -102,9 +102,9 @@ const ArmStep DrawKFS_Below20cm[] = {
             }
         }
     }, // 步骤1
-    {0.0f, 0.0f, 0.55f, 2.5f, M_PI / 2, 0.0f, nullptr}, // 步骤2
-    {0.50f, 2.0f, 0.55f, 1.0f, M_PI / 2, 0.0f, nullptr}, // 步骤3，等待1s吸取
-    {0.50f, 2.0f, 0.0f, 2.5f, M_PI / 2, 0.0f, nullptr}, // 步骤4
+    {0.0f, 0.0f, 0.58f, 4.0f, M_PI / 2, 0.0f, nullptr}, // 步骤2
+    {0.0f, 2.0f, 0.58f, 1.0f, M_PI / 2, 0.0f, nullptr}, // 步骤3，等待1s吸取
+    {0.50f, 3.0f, 0.0f, 2.5f, M_PI / 2, 0.0f, nullptr}, // 步骤4
     {
         0.50f, 0.0f, 0.0f, 0.0f, M_PI, 1.0f,
         [](uint8_t arm_id) { 
@@ -128,9 +128,9 @@ const ArmStep PutKFS_OrderTwo[] = {
             HAL_GPIO_WritePin(GPIOA,GPIO_PIN_2, GPIO_PIN_SET);
         }
     }},// 步骤1
-    {1.0f,2.0f,0.0f,0.0f, M_PI / 2 * 1.05, 0.0f,nullptr},//步骤2
-    {1.0f,0.0f,0.50f,2.0f, M_PI / 2 * 1.05, 0.0f,nullptr},//步骤3
-    {1.0f,3.0f,0.50f,3.0f, M_PI / 2, 0.2f,
+    {1.0f,2.0f,0.0f,0.0f, M_PI / 2 * 1.07, 0.0f,nullptr},//步骤2
+    {1.0f,0.0f,0.55f,5.0f, M_PI / 2 * 1.07, 0.0f,nullptr},//步骤3
+    {1.0f,2.0f,0.55f,2.0f, M_PI / 2, 0.2f,
     [](uint8_t arm_id) { 
         if (arm_id == 0) {
             HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_RESET);
@@ -138,8 +138,35 @@ const ArmStep PutKFS_OrderTwo[] = {
         else if (arm_id == 1) {
             HAL_GPIO_WritePin(GPIOA,GPIO_PIN_2, GPIO_PIN_RESET);
         }
-    }},//步骤4，等待3s
-    {0.0f, 5.0f, 0.0f, 2.5f, 0.0f, 3.0f, nullptr}//步骤5，回到初始位置
+    }},//步骤4，等待2s
+    {0.0f, 5.0f, 0.0f, 3.0f, 0.0f, 3.0f, nullptr}//步骤5，回到初始位置
+};
+
+const ArmStep PutKFS_OrderTwo_Prepare[] = {
+    {0.70f,2.0f, 0.0f, 0.0f, M_PI / 2 * 1.05, 2.0f,
+    [](uint8_t arm_id) { 
+        if (arm_id == 0) {
+            HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET);
+        }
+        else if (arm_id == 1) {
+            HAL_GPIO_WritePin(GPIOA,GPIO_PIN_2, GPIO_PIN_SET);
+        }
+    }},// 步骤1
+    {1.0f,2.0f,0.0f,0.0f, M_PI / 2 * 1.07, 0.0f,nullptr},//步骤2
+    {1.0f,0.0f,0.55f,4.0f, M_PI / 2 * 1.07, 0.0f,nullptr},//步骤3
+};
+
+const ArmStep PutKFS_OrderTwo_Release[] = {
+    {1.0f,1.0f,0.55f,1.0f, M_PI / 2, 0.2f,
+    [](uint8_t arm_id) { 
+        if (arm_id == 0) {
+            HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_RESET);
+        }
+        else if (arm_id == 1) {
+            HAL_GPIO_WritePin(GPIOA,GPIO_PIN_2, GPIO_PIN_RESET);
+        }
+    }},//步骤1，等待1s
+    {0.0f, 5.0f, 0.0f, 3.0f, 0.0f, 3.0f, nullptr}//步骤2，回到初始位置
 };
 
 // ================= 左臂 Flags =================
@@ -148,6 +175,8 @@ bool drawkfs_40cm_flag = false;
 bool drawkfs_below20cm_flag = false;
 bool idle_flag = false;
 bool putkfs_ordertwo_flag = false;
+bool putkfs_ordertwo_prepare_flag = false;
+bool putkfs_ordertwo_release_flag = false;
 
 // ================= 右臂 Flags =================
 bool right_drawkfs_flag = false;
@@ -155,6 +184,8 @@ bool right_drawkfs_40cm_flag = false;
 bool right_drawkfs_below20cm_flag = false;
 bool right_idle_flag = false;
 bool right_putkfs_ordertwo_flag = false;
+bool right_putkfs_ordertwo_prepare_flag = false;
+bool right_putkfs_ordertwo_release_flag = false;
 
 void DrawKFS_Task() {
     // ----------------- 左臂初始化 -----------------
@@ -163,7 +194,7 @@ void DrawKFS_Task() {
     Motor_Z.Init(&hfdcan1, Motor_DJI_ID_0x205, Motor_DJI_Control_Method_ANGLE);
 
     // 同步 R2_Z: DrawKFS 的 X/R 在 CAN1 的 0x206/0x207
-    Motor_X.PID_Omega.Init(1000.0f, 200.0f, 0.0f, 0.0f, 2000.0f, 4000.0f);
+    Motor_X.PID_Omega.Init(1500.0f, 400.0f, 0.0f, 0.0f, 3000.0f, 6000.0f);
     Motor_X.PID_Angle.Init(10.0f, 0.0f, 0.0f, 0.0f, 10.0f, 10.0f);
     Motor_X.Init(&hfdcan1, Motor_DJI_ID_0x206, Motor_DJI_Control_Method_ANGLE);
 
@@ -176,7 +207,7 @@ void DrawKFS_Task() {
     Motor_Z_R.PID_Angle.Init(20.0f, 0.0f, 0.0f, 0.0f, 10.0f, 15.0f);
     Motor_Z_R.Init(&hfdcan3, Motor_DJI_ID_0x201, Motor_DJI_Control_Method_ANGLE); 
 
-    Motor_X_R.PID_Omega.Init(1000.0f, 200.0f, 0.0f, 0.0f, 2000.0f, 4000.0f);
+    Motor_X_R.PID_Omega.Init(1500.0f, 400.0f, 0.0f, 0.0f, 3000.0f, 6000.0f);
     Motor_X_R.PID_Angle.Init(10.0f, 0.0f, 0.0f, 0.0f, 10.0f, 10.0f);
     Motor_X_R.Init(&hfdcan3, Motor_DJI_ID_0x202, Motor_DJI_Control_Method_ANGLE);
 
@@ -231,6 +262,14 @@ void DrawKFS_Task() {
             player_L.Play(PutKFS_OrderTwo, ARRAY_LEN(PutKFS_OrderTwo));
             putkfs_ordertwo_flag = false;
         }
+        else if (putkfs_ordertwo_prepare_flag && !player_L.IsPlaying()) {
+            player_L.Play(PutKFS_OrderTwo_Prepare, ARRAY_LEN(PutKFS_OrderTwo_Prepare));
+            putkfs_ordertwo_prepare_flag = false;
+        }
+        else if (putkfs_ordertwo_release_flag && !player_L.IsPlaying()) {
+            player_L.Play(PutKFS_OrderTwo_Release, ARRAY_LEN(PutKFS_OrderTwo_Release));
+            putkfs_ordertwo_release_flag = false;
+        }
 
         // ================== 右臂触发逻辑 ==================
         if (right_idle_flag && !player_R.IsPlaying()) {
@@ -252,6 +291,14 @@ void DrawKFS_Task() {
         else if (right_putkfs_ordertwo_flag && !player_R.IsPlaying()) {
             player_R.Play(PutKFS_OrderTwo, ARRAY_LEN(PutKFS_OrderTwo));
             right_putkfs_ordertwo_flag = false;
+        }
+        else if (right_putkfs_ordertwo_prepare_flag && !player_R.IsPlaying()) {
+            player_R.Play(PutKFS_OrderTwo_Prepare, ARRAY_LEN(PutKFS_OrderTwo_Prepare));
+            right_putkfs_ordertwo_prepare_flag = false;
+        }
+        else if (right_putkfs_ordertwo_release_flag && !player_R.IsPlaying()) {
+            player_R.Play(PutKFS_OrderTwo_Release, ARRAY_LEN(PutKFS_OrderTwo_Release));
+            right_putkfs_ordertwo_release_flag = false;
         }
 
         player_L.Update();

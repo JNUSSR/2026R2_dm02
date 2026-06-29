@@ -10,7 +10,7 @@
     #error Wrong include order: MAVLINK_R2_V4.H MUST NOT BE DIRECTLY USED. Include mavlink.h from the same directory instead or set ALL AND EVERY defines from MAVLINK.H manually accordingly, including the #define MAVLINK_H call.
 #endif
 
-#define MAVLINK_R2_V4_XML_HASH -6044280928783988624
+#define MAVLINK_R2_V4_XML_HASH -5423183602761371257
 
 #ifdef __cplusplus
 extern "C" {
@@ -55,7 +55,9 @@ typedef enum ARM_ACTION_CMD
    ARM_DRAW_KFS_40cm=2, /* Draw KFS 40cm | */
    ARM_DRAW_KFS_BELOW_20cm=3, /* Draw KFS 20cm from below | */
    ARM_PUT_KFS_ORDER_TWO=4, /* Put KFS into order two | */
-   ARM_ACTION_CMD_ENUM_END=5, /*  | */
+   ARM_PUT_KFS_ORDER_TWO_PREPARE=5, /* Prepare to put KFS into order two | */
+   ARM_PUT_KFS_ORDER_TWO_RELEASE=6, /* Release KFS after putting into order two | */
+   ARM_ACTION_CMD_ENUM_END=7, /*  | */
 } ARM_ACTION_CMD;
 #endif
 
