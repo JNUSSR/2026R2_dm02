@@ -22,6 +22,7 @@ extern bool drawkfs_below20cm_flag;
 extern bool putkfs_ordertwo_flag;
 extern bool putkfs_ordertwo_prepare_flag;
 extern bool putkfs_ordertwo_release_flag;
+extern bool putkfs_orderthree_flag;
 
 // 右臂标志位
 extern bool right_drawkfs_flag;
@@ -31,6 +32,7 @@ extern bool right_drawkfs_below20cm_flag;
 extern bool right_putkfs_ordertwo_flag;
 extern bool right_putkfs_ordertwo_prepare_flag;
 extern bool right_putkfs_ordertwo_release_flag;
+extern bool right_putkfs_orderthree_flag;
 
 extern osSemaphoreId_t uartSemaphoreHandle;
 
@@ -66,6 +68,7 @@ void UartTask() {
                                 case ARM_PUT_KFS_ORDER_TWO:       putkfs_ordertwo_flag = true; break;
                                 case ARM_PUT_KFS_ORDER_TWO_PREPARE: putkfs_ordertwo_prepare_flag = true; break;
                                 case ARM_PUT_KFS_ORDER_TWO_RELEASE: putkfs_ordertwo_release_flag = true; break;
+                                case ARM_PUT_KFS_ORDER_THREE: putkfs_orderthree_flag = true; break;
                             }
                         }
 
@@ -79,6 +82,7 @@ void UartTask() {
                                 case ARM_PUT_KFS_ORDER_TWO:       right_putkfs_ordertwo_flag = true; break;
                                 case ARM_PUT_KFS_ORDER_TWO_PREPARE: right_putkfs_ordertwo_prepare_flag = true; break;
                                 case ARM_PUT_KFS_ORDER_TWO_RELEASE: right_putkfs_ordertwo_release_flag = true; break;
+                                case ARM_PUT_KFS_ORDER_THREE: right_putkfs_orderthree_flag = true; break;
                             }
                         }
                     } else if (msg.msgid == MAVLINK_MSG_ID_CHASSIS_VELOCITY_CMD) {

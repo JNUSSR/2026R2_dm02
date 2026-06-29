@@ -8,6 +8,7 @@
 #include "drv_can.h"
 #include "2_Device/Motor/Motor_DJI/dvc_motor_dji.h"
 #include "main.h"
+#include "mavlink.h"
 #include "stm32h723xx.h"
 #include "stm32h7xx_hal_gpio.h"
 #include "uart_printf.h"
@@ -169,6 +170,30 @@ const ArmStep PutKFS_OrderTwo_Release[] = {
     {0.0f, 5.0f, 0.0f, 3.0f, 0.0f, 3.0f, nullptr}//步骤2，回到初始位置
 };
 
+const ArmStep PutKFS_OrderThree[] = {
+    {0.70f,2.0f, 0.0f, 0.0f, M_PI / 2 * 1.05, 2.0f,
+    [](uint8_t arm_id) { 
+        if (arm_id == 0) {
+            HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET);
+        }
+        else if (arm_id == 1) {
+            HAL_GPIO_WritePin(GPIOA,GPIO_PIN_2, GPIO_PIN_SET);
+        }
+    }},// 步骤1
+    {1.0f,2.0f,0.0f,0.0f, M_PI / 2 * 1.07, 0.0f,nullptr},//步骤2
+    {1.0f,0.0f,0.55f,5.0f, M_PI / 2 * 1.07, 0.0f,nullptr},//步骤3
+    {1.0f,2.0f,0.55f,2.0f, M_PI / 2, 0.2f,
+    [](uint8_t arm_id) { 
+        if (arm_id == 0) {
+            HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_RESET);
+        }
+        else if (arm_id == 1) {
+            HAL_GPIO_WritePin(GPIOA,GPIO_PIN_2, GPIO_PIN_RESET);
+        }
+    }},//步骤4，等待2s
+    {0.0f, 5.0f, 0.0f, 3.0f, 0.0f, 3.0f, nullptr}//步骤5，回到初始位置
+};
+
 // ================= 左臂 Flags =================
 bool drawkfs_flag = false;
 bool drawkfs_40cm_flag = false;
@@ -177,6 +202,7 @@ bool idle_flag = false;
 bool putkfs_ordertwo_flag = false;
 bool putkfs_ordertwo_prepare_flag = false;
 bool putkfs_ordertwo_release_flag = false;
+bool putkfs_orderthree_flag = false;
 
 // ================= 右臂 Flags =================
 bool right_drawkfs_flag = false;
@@ -186,6 +212,7 @@ bool right_idle_flag = false;
 bool right_putkfs_ordertwo_flag = false;
 bool right_putkfs_ordertwo_prepare_flag = false;
 bool right_putkfs_ordertwo_release_flag = false;
+bool right_putkfs_orderthree_flag = false;
 
 void DrawKFS_Task() {
     // ----------------- 左臂初始化 -----------------
@@ -270,6 +297,10 @@ void DrawKFS_Task() {
             player_L.Play(PutKFS_OrderTwo_Release, ARRAY_LEN(PutKFS_OrderTwo_Release));
             putkfs_ordertwo_release_flag = false;
         }
+        else if (putkfs_orderthree_flag && !player_L.IsPlaying()) {
+            player_L.Play(PutKFS_OrderThree, ARRAY_LEN(PutKFS_OrderThree));
+            putkfs_orderthree_flag = false;
+        }
 
         // ================== 右臂触发逻辑 ==================
         if (right_idle_flag && !player_R.IsPlaying()) {
@@ -299,6 +330,10 @@ void DrawKFS_Task() {
         else if (right_putkfs_ordertwo_release_flag && !player_R.IsPlaying()) {
             player_R.Play(PutKFS_OrderTwo_Release, ARRAY_LEN(PutKFS_OrderTwo_Release));
             right_putkfs_ordertwo_release_flag = false;
+        }
+        else if (right_putkfs_orderthree_flag && !player_R.IsPlaying()) {
+            player_R.Play(PutKFS_OrderThree, ARRAY_LEN(PutKFS_OrderThree));
+            right_putkfs_orderthree_flag = false;
         }
 
         player_L.Update();
