@@ -54,8 +54,8 @@
 #define POS_FRONT_TOUCH_40cm      movingmm_front(-400.0f)
 #define POS_REAR_TOUCH_40cm       movingmm_rear(0.0f)
 
-#define POS_FRONT_LIFT_40cm       movingmm_front(20.0f)
-#define POS_REAR_LIFT_40cm        movingmm_rear(420.0f)
+#define POS_FRONT_LIFT_40cm       movingmm_front(30.0f)
+#define POS_REAR_LIFT_40cm        movingmm_rear(430.0f)
 
 #define POS_FRONT_FINAL_40cm movingmm_front(-220.0f)
 #define POS_REAR_FINAL_40cm  movingmm_rear(-80.0f)
