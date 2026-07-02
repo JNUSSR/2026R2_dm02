@@ -42,7 +42,6 @@ void Clamping_Task_Init(void)
 
 /**
  * @brief 一套夹取动作
- * @note 首先确保夹爪水平，然后前进，然后夹取，然后后退，然后停止
  */
 void Clamping_Auto_Start(void)
 {
@@ -51,26 +50,32 @@ void Clamping_Auto_Start(void)
     osDelay(500);
     // 确保夹爪移动到水平位置
     Clamping_Auto_Adjust();
-    osDelay(500);
-    // 前进一段固定距离（0.2m/s*1.5s=30cm）
-    Chassis_Set_Target(0.2f,0.0f,0.0f);
-    osDelay(1500);
+    // 前进一段固定距离（0.3m/s*1s=30cm）
+    Chassis_Set_Target(0.3f,0.0f,0.0f);
+    osDelay(980);
     Chassis_Set_Target(0.0f,0.0f,0.0f);
+    osDelay(500);
+    // 稍微放低一点
+    Clamping_Get_Controller().MoveToAngle(CLAMPING_TARGET_ANGLE_CLAMP_RAD * 0.95);
     osDelay(1000);
-    // 执行夹取动作
+    // 夹取
     clampingCtrl.OpenSolenoid();
+    osDelay(100);
+    // 分两步移动到对接位置
+    Clamping_Get_Controller().MoveToAngle(CLAMPING_TARGET_ANGLE_DOCK_RAD * 0.75f);
     osDelay(1000);
-    // 移动到垂直（对接）位置
     Clamping_Get_Controller().MoveToDockAngle();
     osDelay(500);
-    // 后退一段固定距离（-0.2m/s*1.5s=-30cm）
-    Chassis_Set_Target(-0.2f,0.0f,0.0f);
-    osDelay(1500);
+    // 后退一段固定距离（-0.3m/s*1s=-30cm）
+    Chassis_Set_Target(-0.3f,0.0f,0.0f);
+    osDelay(980);
+    Chassis_Set_Target(0.0f,0.0f,0.0f);    
+    // 转180度
+    Chassis_Set_Target(0.0f,0.0f,PI/2);
+    osDelay(2248);
     Chassis_Set_Target(0.0f,0.0f,0.0f);
     // 放低到对接位置
     Climbing_WeaponRodDockStart();
-
-    Climbing_Init_Pose_Start();
 }
 
 void Clamping_Auto_Adjust(void)

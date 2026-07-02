@@ -110,10 +110,10 @@ void ClimbingController::Init()
     motor_wheel_l_.Init(&hfdcan2, Motor_DJI_ID_0x205, Motor_DJI_Control_Method_ANGLE);
     motor_wheel_r_.Init(&hfdcan2, Motor_DJI_ID_0x206, Motor_DJI_Control_Method_ANGLE);
 
-    motor_lift_front_.PID_Omega.Init(PID_FRONT_OMEGA_KP_NORMAL, 50.0f, 0.0f, 0.0f, 10000.0f, 12000.0f);
+    motor_lift_front_.PID_Omega.Init(PID_FRONT_OMEGA_KP_NORMAL, 100.0f, 0.0f, 0.0f, 10000.0f, 12000.0f);
     motor_lift_front_.PID_Angle.Init(PID_FRONT_ANGLE_KP_NORMAL, 0.5f, 0.0f, 0.0f, 10000.0f, 12000.0f);
 
-    motor_lift_rear_.PID_Omega.Init(PID_REAR_OMEGA_KP_NORMAL, 50.0f, 0.0f, 0.0f, 12000.0f, 14000.0f);
+    motor_lift_rear_.PID_Omega.Init(PID_REAR_OMEGA_KP_NORMAL, 100.0f, 0.0f, 0.0f, 12000.0f, 14000.0f);
     motor_lift_rear_.PID_Angle.Init(PID_REAR_ANGLE_KP_NORMAL, 0.5f, 0.0f, 0.0f, 12000.0f, 14000.0f);
 
     motor_wheel_l_.PID_Omega.Init(PID_WHEEL_OMEGA_KP, PID_WHEEL_OMEGA_KI, 0.0f, 0.0f, 10000.0f, 12000.0f);
